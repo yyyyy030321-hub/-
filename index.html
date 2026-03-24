@@ -387,39 +387,63 @@ body{background:var(--bg);color:var(--text);font-family:'Noto Sans KR',sans-seri
 <!-- ════ 매매 내역 ════ -->
 <div id="page-trades" class="page">
   <div class="phdr">
-    <div><div class="ptitle">매매 내역 <span class="pill pill-kr" id="tp">KR</span></div><div class="psub" id="ts">한국 시장 전체 체결 내역</div></div>
+    <div><div class="ptitle">매매 내역 <span class="pill pill-kr" id="tp">KR</span></div><div class="psub" id="ts">전체 누적 이력</div></div>
     <div class="acts">
-      <select style="background:var(--bg3);color:var(--muted);border:1px solid var(--border2);border-radius:8px;padding:6px 12px;font-size:12px;font-family:'Noto Sans KR',sans-serif;cursor:pointer"><option>2025년 3월</option><option>2025년 2월</option><option>2025년 1월</option></select>
-      <button class="btn btn-g">📤 내보내기</button>
+      <select id="tr-filter-date" onchange="renderTradesPage()" style="background:var(--bg3);color:var(--muted);border:1px solid var(--border2);border-radius:8px;padding:6px 12px;font-size:12px;font-family:'Noto Sans KR',sans-serif;cursor:pointer">
+        <option value="all">전체 날짜</option>
+      </select>
+      <select id="tr-filter-type" onchange="renderTradesPage()" style="background:var(--bg3);color:var(--muted);border:1px solid var(--border2);border-radius:8px;padding:6px 12px;font-size:12px;font-family:'Noto Sans KR',sans-serif;cursor:pointer">
+        <option value="all">전체</option>
+        <option value="win">익절만</option>
+        <option value="lose">손절만</option>
+      </select>
+      <button class="btn btn-g" onclick="exportCSV()">📤 내보내기</button>
+      <button class="btn btn-g" style="color:var(--red)" onclick="clearAllTrades()">🗑 전체 삭제</button>
     </div>
   </div>
-  <div class="kgrid k4">
-    <div class="kcard"><div class="klbl">이달 총 손익</div><div class="kval up">+6,284,500</div><div class="ksub"><span class="badge up">+18.4%</span></div></div>
-    <div class="kcard cr"><div class="klbl">이달 승률</div><div class="kval n">65.2%</div><div class="ksub" style="color:var(--muted)">87건 중 57승</div></div>
-    <div class="kcard ca"><div class="klbl">손익비</div><div class="kval n">1 : <span style="color:var(--green)">2.1</span></div><div class="ksub"><span class="badge up">+0.3</span>전월 대비</div></div>
-    <div class="kcard cp"><div class="klbl">최대 연속 손절</div><div class="kval dn">3</div><div class="ksub" style="color:var(--muted)">3월 14일</div></div>
+
+  <!-- 누적 KPI (동적) -->
+  <div class="kgrid k4" id="tr-kpi">
+    <div class="kcard"><div class="klbl">누적 총 손익</div><div class="kval n" id="tr-total">—</div><div class="ksub" id="tr-total-sub" style="color:var(--muted)">데이터 없음</div></div>
+    <div class="kcard cr"><div class="klbl">전체 승률</div><div class="kval n" id="tr-wr">—</div><div class="ksub" id="tr-wr-sub" style="color:var(--muted)">0건</div></div>
+    <div class="kcard ca"><div class="klbl">손익비</div><div class="kval n" id="tr-ratio">—</div><div class="ksub" style="color:var(--muted)">평균 수익 / 평균 손실</div></div>
+    <div class="kcard cp"><div class="klbl">총 거래일</div><div class="kval n" id="tr-days">—</div><div class="ksub" style="color:var(--muted)" id="tr-days-sub">최초 등록일 기준</div></div>
   </div>
-  <div class="card np">
-    <div class="chdr p">
-      <div><div class="ctitle">전체 체결 내역</div><div class="csub">87건 · 최신순</div></div>
-      <div class="acts">
-        <select style="background:var(--bg3);color:var(--muted);border:1px solid var(--border2);border-radius:6px;padding:5px 10px;font-size:11px;font-family:'Noto Sans KR',sans-serif"><option>전체</option><option>주식</option><option>선물</option><option>옵션</option></select>
-        <select style="background:var(--bg3);color:var(--muted);border:1px solid var(--border2);border-radius:6px;padding:5px 10px;font-size:11px;font-family:'Noto Sans KR',sans-serif"><option>전체</option><option>익절</option><option>손절</option></select>
+
+  <!-- Google Drive 자동 동기화 설정 -->
+  <div class="card col1" id="gdrive-sync-card" style="margin-bottom:14px">
+    <div class="chdr" style="margin-bottom:12px">
+      <div><div class="ctitle">☁ Google Drive 자동 동기화</div><div class="csub">드라이브에 CSV 올리면 자동으로 매매일지에 반영</div></div>
+      <div style="display:flex;align-items:center;gap:8px">
+        <span id="gdrive-sync-status" style="font-size:11px;color:var(--muted)">미설정</span>
+        <button class="btn btn-g" style="font-size:11px;padding:5px 10px" onclick="toggleGDriveSync()">설정</button>
       </div>
     </div>
-    <table class="tbl">
-      <thead><tr><th>날짜/시간</th><th>종목</th><th>구분</th><th>수량</th><th>진입가</th><th>청산가</th><th>등락률</th><th>손익</th><th>메모</th></tr></thead>
-      <tbody>
-        <tr><td class="mn" style="color:var(--muted)">03.23 09:15</td><td><div class="tk">삼성전자</div></td><td><span class="tb long">매수</span></td><td class="mn">400주</td><td class="mn">72,400</td><td class="mn">73,100</td><td class="pu">+0.97%</td><td class="pu">+280,000</td><td style="font-size:11px;color:var(--muted)">갭상승 추종</td></tr>
-        <tr><td class="mn" style="color:var(--muted)">03.23 11:40</td><td><div class="tk">SK하이닉스</div></td><td><span class="tb long">매수</span></td><td class="mn">100주</td><td class="mn">182,000</td><td class="mn">180,500</td><td class="pd">-0.82%</td><td class="pd">-150,000</td><td style="font-size:11px;color:var(--muted)">섹터 약세 손절</td></tr>
-        <tr><td class="mn" style="color:var(--muted)">03.23 13:05</td><td><div class="tk">NAVER</div></td><td><span class="tb long">매수</span></td><td class="mn">150주</td><td class="mn">188,500</td><td class="mn">190,000</td><td class="pu">+0.80%</td><td class="pu">+225,000</td><td style="font-size:11px;color:var(--muted)">실적 기대감</td></tr>
-        <tr><td class="mn" style="color:var(--muted)">03.23 14:10</td><td><div class="tk">카카오</div></td><td><span class="tb short">매도</span></td><td class="mn">250주</td><td class="mn">39,200</td><td class="mn">38,700</td><td class="pu">+1.28%</td><td class="pu">+125,000</td><td style="font-size:11px;color:var(--muted)">차익 실현</td></tr>
-        <tr><td class="mn" style="color:var(--muted)">03.22 10:02</td><td><div class="tk">KOSPI200 F</div></td><td><span class="tb fut">선물</span></td><td class="mn">2계약</td><td class="mn">367.50</td><td class="mn">368.90</td><td class="pu">+0.38%</td><td class="pu">+350,000</td><td style="font-size:11px;color:var(--muted)">트렌드 추종</td></tr>
-        <tr><td class="mn" style="color:var(--muted)">03.22 14:20</td><td><div class="tk">KOSPI200 P380</div></td><td><span class="tb opt">옵션</span></td><td class="mn">5계약</td><td class="mn">2.85</td><td class="mn">2.48</td><td class="pu">+13.0%</td><td class="pu">+137,300</td><td style="font-size:11px;color:var(--muted)">방향성 매수</td></tr>
-        <tr><td class="mn" style="color:var(--muted)">03.21 09:30</td><td><div class="tk">현대차</div></td><td><span class="tb long">매수</span></td><td class="mn">80주</td><td class="mn">241,000</td><td class="mn">245,500</td><td class="pu">+1.87%</td><td class="pu">+360,000</td><td style="font-size:11px;color:var(--muted)">전기차 모멘텀</td></tr>
-        <tr><td class="mn" style="color:var(--muted)">03.21 14:00</td><td><div class="tk">LG에너지솔루션</div></td><td><span class="tb long">매수</span></td><td class="mn">20주</td><td class="mn">412,000</td><td class="mn">408,000</td><td class="pd">-0.97%</td><td class="pd">-80,000</td><td style="font-size:11px;color:var(--muted)">지지선 이탈</td></tr>
-      </tbody>
-    </table>
+    <div id="gdrive-sync-panel" style="display:none">
+      <div style="display:grid;grid-template-columns:1fr auto;gap:8px;align-items:center;margin-bottom:8px">
+        <input id="gdrive-sync-url" type="text" placeholder="Google Drive 공유 링크 붙여넣기 (한 번만 설정)"
+          style="background:var(--bg3);border:1px solid var(--border2);border-radius:8px;padding:9px 12px;color:var(--text);font-size:12px;font-family:'JetBrains Mono',monospace;outline:none;width:100%">
+        <button class="btn btn-primary" onclick="saveGDriveSyncUrl()" style="white-space:nowrap;padding:9px 14px">저장</button>
+      </div>
+      <div style="font-size:11px;color:var(--muted);line-height:1.8;padding:10px 12px;background:rgba(66,133,244,0.05);border-radius:8px;border:1px solid rgba(66,133,244,0.12)">
+        📋 <strong style="color:var(--text)">설정 방법:</strong> Drive에 CSV 업로드 → 우클릭 → 공유 → 링크 복사 → 위에 붙여넣기<br>
+        🔄 페이지 열 때마다 자동으로 확인해서 새 데이터가 있으면 병합합니다<br>
+        ✅ 같은 날짜 데이터는 중복 없이 자동 처리됩니다
+      </div>
+    </div>
+  </div>
+
+  <!-- 매매 내역 테이블 -->
+  <div class="card np">
+    <div class="chdr p">
+      <div><div class="ctitle">체결 내역</div><div class="csub" id="tr-count">0건</div></div>
+    </div>
+    <div style="overflow-x:auto">
+      <table class="tbl" style="min-width:600px">
+        <thead><tr><th>날짜</th><th>종목</th><th>구분</th><th>수량</th><th>매입가</th><th>매도가</th><th>수익률</th><th>손익</th></tr></thead>
+        <tbody id="tr-tbody"><tr><td colspan="8" style="text-align:center;padding:40px;color:var(--muted)">CSV를 업로드하거나 Google Drive를 연동하세요</td></tr></tbody>
+      </table>
+    </div>
   </div>
 </div>
 
@@ -524,9 +548,8 @@ function goPage(id, el) {
   document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('on'));
   if (el) el.classList.add('on');
   if (id === 'trades') {
-    const p = document.getElementById('tp'), s = document.getElementById('ts');
-    if (curSession === 'kr') { p.textContent='KR'; p.className='pill pill-kr'; s.textContent='한국 시장 전체 체결 내역'; }
-    else { p.textContent='US'; p.className='pill pill-us'; s.textContent='미국 시장 전체 체결 내역'; }
+    renderTradesPage();
+    updateGDriveSyncStatus();
   }
 }
 
@@ -536,6 +559,11 @@ function setSession(id) {
   document.getElementById('sb-us').className = 'sess-btn' + (id==='us'?' on-us':'');
   document.getElementById('dash-kr').className = 'sv' + (id==='kr'?' on':'');
   document.getElementById('dash-us').className = 'sv' + (id==='us'?' on':'');
+  // 매매내역 페이지가 열려있으면 세션 변경 시 재렌더
+  if (document.getElementById('page-trades')?.classList.contains('on')) {
+    renderTradesPage();
+    updateGDriveSyncStatus();
+  }
 }
 
 function stab(el, gid) {
@@ -783,45 +811,61 @@ verdict는 반드시 셋 중 하나: 잘한 매매 / 아쉬운 매매 / 잘못�
 // ║          CSV 파서 & Google Drive 연동 시스템              ║
 // ╚══════════════════════════════════════════════════════════╝
 
-// ── 상태 표시 헬퍼 ──
+// ╔══════════════════════════════════════════════════════════╗
+// ║            누적 매매 데이터 관리 엔진 v2                  ║
+// ╚══════════════════════════════════════════════════════════╝
+
+// ── 스토리지 키 ──
+const STORE_KEY  = 'malt_trades_v2';   // { kr: {날짜: [trades]}, us: {날짜: [trades]} }
+const GDRIVE_KEY = 'malt_gdrive_urls'; // { kr: url, us: url }
+const GDRIVE_HASH= 'malt_gdrive_hash'; // { kr: hash, us: hash } — 중복 방지
+
+// ── 전체 데이터 로드/저장 ──
+function loadAllTrades() {
+  try {
+    const raw = localStorage.getItem(STORE_KEY);
+    return raw ? JSON.parse(raw) : { kr: {}, us: {} };
+  } catch(e) { return { kr: {}, us: {} }; }
+}
+function saveAllTrades(db) {
+  localStorage.setItem(STORE_KEY, JSON.stringify(db));
+}
+
+// ── 날짜 키 생성 (YYYY-MM-DD) ──
+function todayKey() {
+  return new Date().toISOString().slice(0,10);
+}
+
+// ── 상태 표시 ──
 function setStatus(msg, color='var(--muted)') {
   const el = document.getElementById('csv-status');
   if (el) { el.textContent = msg; el.style.color = color; }
 }
-
-// ── 연결 상태 업데이트 ──
 function setConnStatus(session, loaded, count) {
   const txt = document.getElementById(`conn-${session}-txt`);
   const dot = document.getElementById(`dot-${session}`);
   if (!txt || !dot) return;
   if (loaded) {
-    txt.textContent = session === 'kr' ? `키움 ${count}건 로드됨` : `나무 ${count}건 로드됨`;
+    txt.textContent = session === 'kr' ? `키움 ${count}건` : `나무 ${count}건`;
     dot.style.background = session === 'kr' ? 'var(--green)' : 'var(--blue)';
     dot.style.boxShadow  = session === 'kr' ? '0 0 5px var(--green)' : '0 0 5px var(--blue)';
-  } else {
-    txt.textContent = session === 'kr' ? '키움증권 대기중' : '나무증권 대기중';
   }
 }
 
 // ══════════════════════════════════════════════════
-// CSV 로더 (메인 진입점)
+// CSV 로더
 // ══════════════════════════════════════════════════
 function loadCSV(event, session) {
   const file = event.target.files[0];
   if (!file) return;
-
   setStatus('⟳ 파일 읽는 중...', 'var(--muted)');
 
-  // 키움은 EUC-KR, 나무(미국)는 UTF-8 시도 후 EUC-KR fallback
-  const enc = session === 'kr' ? 'EUC-KR' : 'UTF-8';
-  readFileWithEncoding(file, enc)
+  readFileWithEncoding(file, session === 'kr' ? 'EUC-KR' : 'UTF-8')
     .then(text => processCSVText(text, session, file.name))
-    .catch(() => {
-      // UTF-8 실패 시 EUC-KR 재시도
-      return readFileWithEncoding(file, 'EUC-KR')
-        .then(text => processCSVText(text, session, file.name));
-    })
+    .catch(() => readFileWithEncoding(file, 'EUC-KR')
+      .then(text => processCSVText(text, session, file.name)))
     .catch(err => setStatus('⚠ ' + err.message, 'var(--red)'));
+  event.target.value = '';
 }
 
 function readFileWithEncoding(file, encoding) {
@@ -833,140 +877,145 @@ function readFileWithEncoding(file, encoding) {
   });
 }
 
-// ── CSV 텍스트 처리 ──
+// ── CSV 처리 (날짜별 병합) ──
 function processCSVText(text, session, filename) {
-  // 파일명으로 증권사 자동 감지
   const broker = detectBroker(text, filename, session);
-  const trades = broker === 'kiwoom'
-    ? parseKiwoomCSV(text)
-    : parseNamuCSV(text);
+  const trades = broker === 'kiwoom' ? parseKiwoomCSV(text) : parseNamuCSV(text);
 
   if (trades.length === 0) {
     setStatus('⚠ 체결 데이터를 찾을 수 없습니다', 'var(--amber)');
     return;
   }
 
-  // 전역 데이터 교체
-  if (session === 'kr') { krT.length = 0; krT.push(...trades); }
-  else                  { usT.length = 0; usT.push(...trades); }
+  // 날짜가 없는 경우 오늘 날짜로
+  const now = todayKey();
+  trades.forEach(t => { if (!t.date) t.date = now; });
 
-  // 저장 & 화면 갱신
-  const now = new Date().toLocaleString('ko-KR');
-  localStorage.setItem(`trades_${session}`,      JSON.stringify(trades));
-  localStorage.setItem(`trades_${session}_date`, now);
+  // 날짜별로 그룹화
+  const byDate = {};
+  trades.forEach(t => {
+    const d = normalizeDate(t.date) || now;
+    if (!byDate[d]) byDate[d] = [];
+    byDate[d].push(t);
+  });
 
-  refreshDashboard(session, trades);
-  setConnStatus(session, true, trades.length);
+  // 기존 데이터에 병합 (날짜별 덮어쓰기 — 같은 날짜 CSV 재업로드 시 갱신)
+  const db = loadAllTrades();
+  if (!db[session]) db[session] = {};
+  Object.entries(byDate).forEach(([date, rows]) => {
+    db[session][date] = rows;
+  });
+  saveAllTrades(db);
+
+  // 전역 배열 업데이트 (대시보드용)
+  const allTrades = getAllTrades(session);
+  if (session === 'kr') { krT.length = 0; krT.push(...allTrades.slice(-10)); }
+  else                  { usT.length = 0; usT.push(...allTrades.slice(-10)); }
+
+  refreshDashboard(session, allTrades.slice(-10));
+  setConnStatus(session, true, allTrades.length);
+  renderTradesPage();
+
+  const dates = Object.keys(byDate).sort().reverse();
+  setStatus(`✓ ${trades.length}건 추가 (${dates[0]})`, 'var(--green)');
 
   const syncEl = document.getElementById('sync-time');
-  if (syncEl) syncEl.textContent = `마지막 로드: ${now}`;
-
-  setStatus(`✓ ${trades.length}건 로드 완료 (${broker})`, 'var(--green)');
+  if (syncEl) syncEl.textContent = `마지막 동기화: ${new Date().toLocaleString('ko-KR')}`;
   setSession(session);
+}
 
-  // 입력 초기화 (같은 파일 재업로드 가능하게)
-  event && event.target && (event.target.value = '');
+// ── 날짜 정규화 → YYYY-MM-DD ──
+function normalizeDate(raw) {
+  if (!raw) return null;
+  raw = raw.trim();
+  // YYYYMMDD
+  if (/^\d{8}$/.test(raw)) return `${raw.slice(0,4)}-${raw.slice(4,6)}-${raw.slice(6,8)}`;
+  // YYYY.MM.DD or YYYY/MM/DD
+  if (/^\d{4}[./]\d{2}[./]\d{2}$/.test(raw)) return raw.replace(/[./]/g,'-');
+  // MM/DD/YYYY
+  if (/^\d{2}\/\d{2}\/\d{4}$/.test(raw)) { const p=raw.split('/'); return `${p[2]}-${p[0]}-${p[1]}`; }
+  // YY.MM.DD
+  if (/^\d{2}[./]\d{2}[./]\d{2}$/.test(raw)) { const p=raw.split(/[./]/); return `20${p[0]}-${p[1]}-${p[2]}`; }
+  return raw.slice(0,10) || null;
+}
+
+// ── 세션의 전체 누적 트레이드 반환 (최신순) ──
+function getAllTrades(session) {
+  const db = loadAllTrades();
+  const data = db[session] || {};
+  return Object.keys(data).sort().reverse()
+    .flatMap(date => data[date].map(t => ({...t, date})));
 }
 
 // ── 증권사 자동 감지 ──
 function detectBroker(text, filename, session) {
   if (session === 'kr') {
-    if (filename.includes('키움') || filename.toLowerCase().includes('kiwoom')) return 'kiwoom';
-    if (text.includes('영웅문') || text.includes('체결잔고') || text.includes('매수단가')) return 'kiwoom';
-    return 'kiwoom'; // KR 기본값
-  } else {
-    return 'namu'; // US 기본값
+    if (/키움|kiwoom/i.test(filename)) return 'kiwoom';
+    if (/영웅문|체결잔고|매수단가|평균매입가/.test(text)) return 'kiwoom';
+    return 'kiwoom';
   }
+  return 'namu';
 }
 
 // ══════════════════════════════════════════════════
-// 키움증권 CSV 파서 (영웅문4 체결잔고 0312 기준)
+// 키움증권 CSV 파서
 // ══════════════════════════════════════════════════
 function parseKiwoomCSV(text) {
   const trades = [];
-  const lines  = text.split(/\r?\n/).map(l => l.trim()).filter(l => l && !l.startsWith('#'));
-
-  // 헤더 행 탐색 (종목명·체결·손익 중 하나라도 포함)
-  const headerKeywords = ['종목명','종목코드','매매구분','체결','손익','매수단가'];
-  let headerIdx = lines.findIndex(l => headerKeywords.some(k => l.includes(k)));
-  if (headerIdx === -1) headerIdx = 0;
-
-  const headers = splitCSVLine(lines[headerIdx]);
-
-  // 컬럼 인덱스 사전 매핑 (유연하게)
+  const lines = text.split(/\r?\n/).map(l => l.trim()).filter(l => l && !l.startsWith('#'));
+  const kw = ['종목명','종목코드','매매구분','체결','손익','매수단가','평균매입가'];
+  let hi = lines.findIndex(l => kw.some(k => l.includes(k)));
+  if (hi === -1) hi = 0;
+  const headers = splitCSVLine(lines[hi]);
   const COL = {};
   const colMap = {
     name  : ['종목명','종목'],
-    buyPx : ['매수단가','평균매수가','매수가'],
-    sellPx: ['매도단가','평균매도가','매도가','청산가'],
+    buyPx : ['매수단가','평균매수가','평균매입가','매수가','매입가'],
+    sellPx: ['매도단가','평균매도가','평균매도가','매도가','청산가'],
     pnl   : ['실현손익','손익금액','실현수익'],
     qty   : ['수량','체결수량','매수수량'],
     type  : ['매매구분','구분'],
     date  : ['일자','체결일자','날짜'],
     time  : ['체결시간','시간'],
+    rate  : ['수익률'],
   };
-  Object.entries(colMap).forEach(([key, candidates]) => {
-    const idx = headers.findIndex(h => candidates.includes(h));
-    COL[key] = idx;
+  Object.entries(colMap).forEach(([k,v]) => {
+    COL[k] = headers.findIndex(h => v.includes(h));
   });
-
-  for (let i = headerIdx + 1; i < lines.length; i++) {
+  for (let i = hi + 1; i < lines.length; i++) {
     const cols = splitCSVLine(lines[i]);
     if (cols.length < 4) continue;
-
-    const get = key => COL[key] >= 0 ? (cols[COL[key]] || '') : '';
-
-    const name   = get('name');
+    const get = k => COL[k] >= 0 ? (cols[COL[k]] || '') : '';
+    const name = get('name').replace(/^'+/, '').trim();
+    if (!name || name.length < 2) continue;
     const buyPx  = parseNum(get('buyPx'));
     const sellPx = parseNum(get('sellPx'));
     const pnl    = parseNum(get('pnl'));
     const qty    = parseInt(get('qty').replace(/,/g,'')) || 1;
-    const rawType = get('type');
-    const date   = get('date');
-    const time   = get('time');
-
-    // 유효성 검사
-    if (!name || name.length < 2) continue;
+    const rate   = parseNum(get('rate'));
     if (buyPx === 0 && sellPx === 0) continue;
-
-    const win  = pnl > 0;
-    const type = rawType.includes('선물') ? 'fut'
-               : rawType.includes('옵션') ? 'opt'
-               : rawType.includes('매도') ? 'short'
-               : 'long';
-
+    const win  = pnl > 0 || (!isNaN(rate) && rate > 0);
+    const raw  = get('type');
+    const type = raw.includes('선물') ? 'fut' : raw.includes('옵션') ? 'opt' : raw.includes('매도') ? 'short' : 'long';
     const absK = Math.abs(pnl);
-    trades.push({
-      l    : name,
-      entry: buyPx  || sellPx,
-      exit : sellPx || buyPx,
-      pnl  : pnl,
-      ps   : `${win?'+':''}${pnl.toLocaleString()}원`,
-      pl   : `${win?'+':''}${(absK>=10000 ? Math.round(absK/10000)+'만' : absK.toLocaleString())}`,
-      w    : win,
-      qty  : qty,
-      date : date,
-      time : time,
-      type : type,
-    });
+    trades.push({ l:name, entry:buyPx||sellPx, exit:sellPx||buyPx, pnl,
+      ps:`${win?'+':''}${pnl.toLocaleString()}원`,
+      pl:`${win?'+':''}${absK>=10000?Math.round(absK/10000)+'만':absK.toLocaleString()}`,
+      w:win, qty, date:get('date'), time:get('time'), type, rate });
   }
-
   return trades;
 }
 
 // ══════════════════════════════════════════════════
-// 나무증권(미국) CSV 파서
+// 나무증권 CSV 파서
 // ══════════════════════════════════════════════════
 function parseNamuCSV(text) {
   const trades = [];
-  const lines  = text.split(/\r?\n/).map(l => l.trim()).filter(l => l && !l.startsWith('#'));
-
-  const headerKeywords = ['종목','매수','체결','Symbol','Ticker','Buy','Sell','P&L'];
-  let headerIdx = lines.findIndex(l => headerKeywords.some(k => l.includes(k)));
-  if (headerIdx === -1) headerIdx = 0;
-
-  const headers = splitCSVLine(lines[headerIdx]);
-
+  const lines = text.split(/\r?\n/).map(l => l.trim()).filter(l => l && !l.startsWith('#'));
+  const kw = ['종목','매수','체결','Symbol','Ticker','Buy','Sell','P&L'];
+  let hi = lines.findIndex(l => kw.some(k => l.includes(k)));
+  if (hi === -1) hi = 0;
+  const headers = splitCSVLine(lines[hi]);
   const COL = {};
   const colMap = {
     name  : ['종목명','Symbol','Ticker','종목'],
@@ -977,55 +1026,35 @@ function parseNamuCSV(text) {
     date  : ['일자','Date','날짜'],
     cur   : ['통화','Currency'],
   };
-  Object.entries(colMap).forEach(([key, candidates]) => {
-    const idx = headers.findIndex(h => candidates.some(c => h.includes(c)));
-    COL[key] = idx;
+  Object.entries(colMap).forEach(([k,v]) => {
+    COL[k] = headers.findIndex(h => v.some(c => h.includes(c)));
   });
-
-  for (let i = headerIdx + 1; i < lines.length; i++) {
+  for (let i = hi + 1; i < lines.length; i++) {
     const cols = splitCSVLine(lines[i]);
     if (cols.length < 3) continue;
-
-    const get = key => COL[key] >= 0 ? (cols[COL[key]] || '') : '';
-
-    const name   = get('name').replace(/"/g,'');
+    const get = k => COL[k] >= 0 ? (cols[COL[k]] || '') : '';
+    const name = get('name').replace(/"/g,'');
+    if (!name) continue;
     const buyPx  = parseNum(get('buyPx').replace(/[$,]/g,''));
     const sellPx = parseNum(get('sellPx').replace(/[$,]/g,''));
     const pnl    = parseNum(get('pnl').replace(/[$,+]/g,''));
     const qty    = parseInt(get('qty').replace(/,/g,'')) || 1;
-    const date   = get('date');
-    const isUSD  = /^[A-Z]{1,5}[0-9]?$/.test(name) || get('cur') === 'USD';
-
-    if (!name || name.length < 1) continue;
-    if (buyPx === 0 && sellPx === 0 && pnl === 0) continue;
-
+    if (buyPx===0 && sellPx===0 && pnl===0) continue;
+    const isUSD = /^[A-Z]{1,5}[0-9]?$/.test(name) || get('cur')==='USD';
     const win = pnl >= 0;
     const absP = Math.abs(pnl);
-    trades.push({
-      l    : name,
-      entry: buyPx  || sellPx,
-      exit : sellPx || buyPx,
-      pnl  : pnl,
-      ps   : `${win?'+':''}${isUSD ? '$' : ''}${absP.toLocaleString()}`,
-      pl   : `${win?'+':''}${isUSD ? '$' : ''}${absP.toLocaleString()}`,
-      w    : win,
-      qty  : qty,
-      date : date,
-      type : name.includes('선물') || name.includes('ES') || name.includes('NQ') ? 'fut'
-           : name.includes('C ') || name.includes('P ') ? 'opt'
-           : 'long',
-    });
+    trades.push({ l:name, entry:buyPx||sellPx, exit:sellPx||buyPx, pnl,
+      ps:`${win?'+':''}${isUSD?'$':''}${absP.toLocaleString()}`,
+      pl:`${win?'+':''}${isUSD?'$':''}${absP.toLocaleString()}`,
+      w:win, qty, date:get('date'), type:'long' });
   }
-
   return trades;
 }
 
-// ── CSV 라인 파서 (따옴표 안 쉼표 처리) ──
+// ── CSV 라인 파서 ──
 function splitCSVLine(line) {
-  const result = [];
-  let cur = '', inQ = false;
-  for (let i = 0; i < line.length; i++) {
-    const c = line[i];
+  const result = []; let cur = '', inQ = false;
+  for (const c of line) {
     if (c === '"') { inQ = !inQ; continue; }
     if (c === ',' && !inQ) { result.push(cur.trim()); cur = ''; continue; }
     cur += c;
@@ -1033,8 +1062,6 @@ function splitCSVLine(line) {
   result.push(cur.trim());
   return result;
 }
-
-// ── 숫자 파싱 (한/영 혼용) ──
 function parseNum(s) {
   if (!s) return 0;
   const n = parseFloat(String(s).replace(/,/g,'').replace(/[원₩]/g,'').trim());
@@ -1042,207 +1069,250 @@ function parseNum(s) {
 }
 
 // ══════════════════════════════════════════════════
-// 대시보드 전체 새로고침
+// 매매내역 페이지 렌더
+// ══════════════════════════════════════════════════
+function renderTradesPage() {
+  const sess    = curSession;
+  const all     = getAllTrades(sess);
+  const db      = loadAllTrades();
+  const dates   = Object.keys(db[sess]||{}).sort().reverse();
+
+  // 날짜 필터 옵션 업데이트
+  const sel = document.getElementById('tr-filter-date');
+  if (sel) {
+    const cur = sel.value;
+    sel.innerHTML = '<option value="all">전체 날짜</option>' +
+      dates.map(d => `<option value="${d}"${d===cur?' selected':''}>${d}</option>`).join('');
+  }
+
+  const filterDate = sel ? sel.value : 'all';
+  const filterType = document.getElementById('tr-filter-type')?.value || 'all';
+
+  let filtered = filterDate === 'all' ? all : all.filter(t => normalizeDate(t.date) === filterDate);
+  if (filterType === 'win')  filtered = filtered.filter(t => t.w);
+  if (filterType === 'lose') filtered = filtered.filter(t => !t.w);
+
+  // KPI 계산
+  const wins   = all.filter(t => t.w);
+  const losses = all.filter(t => !t.w);
+  const total  = all.reduce((s,t) => s+t.pnl, 0);
+  const avgW   = wins.length   ? wins.reduce((s,t)=>s+t.pnl,0)/wins.length : 0;
+  const avgL   = losses.length ? Math.abs(losses.reduce((s,t)=>s+t.pnl,0)/losses.length) : 1;
+  const wr     = all.length ? ((wins.length/all.length)*100).toFixed(1)+'%' : '—';
+  const ratio  = avgL > 0 ? '1 : '+(avgW/avgL).toFixed(1) : '—';
+  const isKR   = sess === 'kr';
+  const unit   = isKR ? '원' : 'USD';
+
+  const setEl = (id, v) => { const e=document.getElementById(id); if(e) e.textContent=v; };
+  setEl('tr-total', all.length ? `${total>=0?'+':''}${total.toLocaleString()}${isKR?'원':' USD'}` : '—');
+  setEl('tr-total-sub', all.length ? `${all.length}건 합산` : '데이터 없음');
+  const tTotal = document.getElementById('tr-total');
+  if (tTotal) tTotal.className = `kval ${total>=0?'up':'dn'}`;
+  setEl('tr-wr', wr);
+  setEl('tr-wr-sub', `${wins.length}승 ${losses.length}패`);
+  setEl('tr-ratio', ratio);
+  setEl('tr-days', dates.length ? dates.length+'일' : '—');
+  setEl('tr-days-sub', dates.length ? `${dates[dates.length-1]} ~ ${dates[0]}` : '최초 등록일 기준');
+  setEl('tr-count', `${filtered.length}건`);
+
+  // pill 업데이트
+  const pill = document.getElementById('tp');
+  if (pill) { pill.textContent=isKR?'KR':'US'; pill.className=`pill ${isKR?'pill-kr':'pill-us'}`; }
+
+  // 테이블 렌더
+  const tbody = document.getElementById('tr-tbody');
+  if (!tbody) return;
+  if (filtered.length === 0) {
+    tbody.innerHTML = `<tr><td colspan="8" style="text-align:center;padding:40px;color:var(--muted)">${all.length===0?'CSV를 업로드하거나 Google Drive를 연동하세요':'해당 날짜의 데이터가 없습니다'}</td></tr>`;
+    return;
+  }
+  const typeLabel = { long:'매수', short:'매도', fut:'선물', opt:'옵션' };
+  tbody.innerHTML = filtered.map(t => {
+    const diff = t.entry ? ((t.exit/t.entry-1)*100).toFixed(2) : '0.00';
+    return `<tr>
+      <td class="mn" style="color:var(--muted)">${normalizeDate(t.date)||t.date||'—'}</td>
+      <td><div class="tk">${t.l}</div></td>
+      <td><span class="tb ${t.type||'long'}">${typeLabel[t.type]||'매수'}</span></td>
+      <td class="mn">${t.qty||1}</td>
+      <td class="mn">${(t.entry||0).toLocaleString()}</td>
+      <td class="mn">${(t.exit||0).toLocaleString()}</td>
+      <td class="${t.w?'pu':'pd'}">${diff>=0?'+':''}${diff}%</td>
+      <td class="${t.w?'pu':'pd'}">${t.ps}</td>
+    </tr>`;
+  }).join('');
+}
+
+// ── CSV 내보내기 ──
+function exportCSV() {
+  const all = getAllTrades(curSession);
+  if (!all.length) { alert('내보낼 데이터가 없습니다'); return; }
+  const header = '날짜,종목,구분,수량,매입가,매도가,손익\n';
+  const rows = all.map(t => `${normalizeDate(t.date)||''},${t.l},${t.type},${t.qty},${t.entry},${t.exit},${t.pnl}`).join('\n');
+  const blob = new Blob(['\uFEFF'+header+rows], {type:'text/csv;charset=utf-8'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = `매매내역_${curSession}_${todayKey()}.csv`;
+  a.click();
+}
+
+// ── 전체 삭제 ──
+function clearAllTrades() {
+  if (!confirm(`${curSession.toUpperCase()} 세션의 전체 매매 이력을 삭제하시겠습니까?`)) return;
+  const db = loadAllTrades();
+  db[curSession] = {};
+  saveAllTrades(db);
+  if (curSession==='kr') krT.length=0; else usT.length=0;
+  renderTradesPage();
+  setStatus('삭제 완료', 'var(--muted)');
+}
+
+// ══════════════════════════════════════════════════
+// Google Drive 자동 동기화
+// ══════════════════════════════════════════════════
+function toggleGDriveSync() {
+  const panel = document.getElementById('gdrive-sync-panel');
+  if (!panel) return;
+  const isOpen = panel.style.display !== 'none';
+  panel.style.display = isOpen ? 'none' : 'block';
+  // 저장된 URL 불러오기
+  if (!isOpen) {
+    const urls = JSON.parse(localStorage.getItem(GDRIVE_KEY)||'{}');
+    const input = document.getElementById('gdrive-sync-url');
+    if (input && urls[curSession]) input.value = urls[curSession];
+  }
+}
+
+function saveGDriveSyncUrl() {
+  const url = document.getElementById('gdrive-sync-url')?.value.trim();
+  if (!url || !url.includes('drive.google.com')) {
+    alert('올바른 Google Drive 링크를 입력해주세요');
+    return;
+  }
+  const urls = JSON.parse(localStorage.getItem(GDRIVE_KEY)||'{}');
+  urls[curSession] = url;
+  localStorage.setItem(GDRIVE_KEY, JSON.stringify(urls));
+  document.getElementById('gdrive-sync-panel').style.display = 'none';
+  updateGDriveSyncStatus();
+  setStatus('✓ Drive 링크 저장됨 · 페이지 로드 시 자동 확인', 'var(--green)');
+  // 저장 즉시 한 번 동기화
+  syncFromGDrive(curSession);
+}
+
+function updateGDriveSyncStatus() {
+  const urls = JSON.parse(localStorage.getItem(GDRIVE_KEY)||'{}');
+  const el = document.getElementById('gdrive-sync-status');
+  if (!el) return;
+  if (urls[curSession]) {
+    el.textContent = '✓ 연동됨';
+    el.style.color = 'var(--green)';
+  } else {
+    el.textContent = '미설정';
+    el.style.color = 'var(--muted)';
+  }
+}
+
+async function syncFromGDrive(session) {
+  const urls  = JSON.parse(localStorage.getItem(GDRIVE_KEY)||'{}');
+  const url   = urls[session];
+  if (!url) return;
+
+  const m = url.match(/\/d\/([a-zA-Z0-9_-]+)/);
+  if (!m) return;
+  const fileId = m[1];
+
+  try {
+    const dlUrl   = `https://drive.google.com/uc?export=download&id=${fileId}`;
+    const proxy   = `https://corsproxy.io/?${encodeURIComponent(dlUrl)}`;
+    const res     = await fetch(proxy);
+    if (!res.ok) return;
+    const text    = await res.text();
+
+    // 해시 비교 — 같은 파일이면 스킵
+    const hash = text.length + '_' + text.slice(0,100);
+    const hashes = JSON.parse(localStorage.getItem(GDRIVE_HASH)||'{}');
+    if (hashes[session] === hash) return; // 변경 없음
+    hashes[session] = hash;
+    localStorage.setItem(GDRIVE_HASH, JSON.stringify(hashes));
+
+    // 새 데이터 처리
+    processCSVText(text, session, 'gdrive_auto.csv');
+    setStatus('☁ Drive에서 새 데이터 감지 · 자동 반영됨', 'var(--green)');
+  } catch(e) {
+    // Drive 동기화 실패는 조용히 무시 (UX 방해 안 되게)
+    console.log('Drive sync:', e.message);
+  }
+}
+
+// ── 구버전 Drive 픽커 (사이드바 버튼) ──
+function openGDrivePicker() {
+  goPage('trades', document.getElementById('ni-trades'));
+  setTimeout(() => {
+    const panel = document.getElementById('gdrive-sync-panel');
+    if (panel) panel.style.display = 'block';
+    document.getElementById('gdrive-sync-url')?.focus();
+  }, 100);
+}
+
+// ══════════════════════════════════════════════════
+// 대시보드 차트/KPI 새로고침
 // ══════════════════════════════════════════════════
 function refreshDashboard(session, trades) {
   const wins   = trades.filter(t => t.w);
   const losses = trades.filter(t => !t.w);
-  const total  = trades.reduce((s, t) => s + t.pnl, 0);
-  const avgW   = wins.length   ? wins.reduce((s,t) => s + t.pnl, 0) / wins.length : 0;
-  const avgL   = losses.length ? Math.abs(losses.reduce((s,t) => s + t.pnl, 0) / losses.length) : 1;
-  const ratio  = avgL > 0 ? (avgW / avgL).toFixed(1) : '∞';
-  const wr     = trades.length ? ((wins.length / trades.length) * 100).toFixed(1) + '%' : '0%';
+  const total  = trades.reduce((s,t) => s+t.pnl, 0);
+  const avgW   = wins.length   ? wins.reduce((s,t)=>s+t.pnl,0)/wins.length : 0;
+  const avgL   = losses.length ? Math.abs(losses.reduce((s,t)=>s+t.pnl,0)/losses.length) : 1;
+  const wr     = trades.length ? ((wins.length/trades.length)*100).toFixed(1)+'%' : '0%';
   const isKR   = session === 'kr';
-
-  // KPI 업데이트
-  const dash = document.getElementById(`dash-${session}`);
+  const dash   = document.getElementById(`dash-${session}`);
   if (!dash) return;
-
-  const kvals = dash.querySelectorAll('.kval');
-  const ksubs = dash.querySelectorAll('.ksub');
-
-  if (kvals[0]) {
-    kvals[0].textContent = `${total >= 0 ? '+' : ''}${total.toLocaleString()}${isKR ? '' : ' USD'}`;
-    kvals[0].className   = `kval ${total >= 0 ? 'up' : 'dn'}`;
-  }
-  if (kvals[1]) { kvals[1].textContent = wr; kvals[1].className = 'kval n'; }
-  if (kvals[2]) { kvals[2].textContent = trades.length; }
-  if (ksubs[2]) { ksubs[2].textContent = `익절 ${wins.length} / 손절 ${losses.length}`; }
-
-  // 차트 재렌더
-  const eeId  = session + '-ee';
-  const pnlId = session + '-pnl';
+  const kvals  = dash.querySelectorAll('.kval');
+  const ksubs  = dash.querySelectorAll('.ksub');
+  if (kvals[0]) { kvals[0].textContent=`${total>=0?'+':''}${total.toLocaleString()}${isKR?'':' USD'}`; kvals[0].className=`kval ${total>=0?'up':'dn'}`; }
+  if (kvals[1]) { kvals[1].textContent=wr; }
+  if (kvals[2]) { kvals[2].textContent=trades.length; }
+  if (ksubs[2]) { ksubs[2].textContent=`익절 ${wins.length} / 손절 ${losses.length}`; }
+  const eeId=session+'-ee', pnlId=session+'-pnl';
   Chart.getChart(eeId)?.destroy();
   Chart.getChart(pnlId)?.destroy();
   makeEE(eeId, trades);
-  makePnl(pnlId, trades, isKR ? '원' : 'USD');
-
-  // 대시보드 미니 테이블 (최신 5건)
+  makePnl(pnlId, trades, isKR?'원':'USD');
   const tbody = dash.querySelector('tbody');
   if (tbody) {
-    const typeLabel = { long:'매수', short:'매도', fut:'선물', opt:'옵션' };
-    tbody.innerHTML = trades.slice(0, 5).map(t => `
-      <tr>
-        <td>
-          <div class="tk">${t.l}</div>
-          <div style="font-size:10px;color:var(--muted)">${t.date || ''} ${t.time || ''}</div>
-        </td>
-        <td><span class="tb ${t.type}">${typeLabel[t.type] || '매수'}</span></td>
-        <td class="mn">${t.entry.toLocaleString()}</td>
-        <td class="mn">${t.exit.toLocaleString()}</td>
-        <td class="${t.w ? 'pu' : 'pd'}">${t.ps}</td>
-      </tr>`).join('');
+    const tl = { long:'매수', short:'매도', fut:'선물', opt:'옵션' };
+    tbody.innerHTML = trades.slice(0,5).map(t=>`
+      <tr><td><div class="tk">${t.l}</div><div style="font-size:10px;color:var(--muted)">${t.date||''}</div></td>
+      <td><span class="tb ${t.type||'long'}">${tl[t.type]||'매수'}</span></td>
+      <td class="mn">${(t.entry||0).toLocaleString()}</td>
+      <td class="mn">${(t.exit||0).toLocaleString()}</td>
+      <td class="${t.w?'pu':'pd'}">${t.ps}</td></tr>`).join('');
   }
 }
 
 // ══════════════════════════════════════════════════
-// Google Drive 연동
-// ══════════════════════════════════════════════════
-const GDRIVE_CONFIG = {
-  CLIENT_ID: '',   // ← Google Cloud Console에서 발급 (선택사항)
-  API_KEY: '',     // ← Google Cloud Console에서 발급 (선택사항)
-};
-
-function openGDrivePicker() {
-  // 방법 1: Google Drive 공유 링크로 직접 다운로드 (API 키 불필요)
-  showGDriveModal();
-}
-
-function showGDriveModal() {
-  const ex = document.getElementById('gdrive-modal');
-  if (ex) ex.remove();
-
-  const modal = document.createElement('div');
-  modal.id = 'gdrive-modal';
-  modal.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.75);z-index:9999;display:flex;align-items:center;justify-content:center;backdrop-filter:blur(4px)';
-  modal.innerHTML = `
-    <div style="background:#111318;border:1px solid rgba(255,255,255,0.12);border-radius:16px;padding:28px;width:500px;max-width:92vw">
-      <div style="display:flex;align-items:center;gap:10px;margin-bottom:18px">
-        <span style="font-size:20px">☁</span>
-        <div>
-          <div style="font-size:15px;font-weight:700">Google Drive에서 가져오기</div>
-          <div style="font-size:11px;color:var(--muted);margin-top:2px">CSV 파일을 Drive에 올리고 공유 링크를 붙여넣으세요</div>
-        </div>
-      </div>
-
-      <!-- 사용 방법 -->
-      <div style="background:rgba(66,133,244,0.06);border:1px solid rgba(66,133,244,0.15);border-radius:8px;padding:12px 14px;margin-bottom:16px;font-size:11px;color:var(--muted);line-height:1.8">
-        <div style="color:#4285f4;font-weight:600;margin-bottom:5px">📋 사용 방법</div>
-        1. Google Drive에 CSV 파일 업로드<br>
-        2. 파일 우클릭 → <strong style="color:var(--text)">공유 → 링크 복사</strong> (뷰어 권한)<br>
-        3. 아래에 링크 붙여넣기 → 세션 선택 후 불러오기
-      </div>
-
-      <!-- 링크 입력 -->
-      <div style="margin-bottom:12px">
-        <div style="font-size:11px;color:var(--muted);margin-bottom:6px">Google Drive 공유 링크</div>
-        <input id="gdrive-url" type="text" placeholder="https://drive.google.com/file/d/..."
-          style="width:100%;background:#181c24;border:1px solid rgba(255,255,255,0.15);border-radius:8px;padding:10px 12px;color:var(--text);font-size:12px;font-family:'JetBrains Mono',monospace;outline:none;box-sizing:border-box">
-      </div>
-
-      <!-- 세션 선택 -->
-      <div style="margin-bottom:16px">
-        <div style="font-size:11px;color:var(--muted);margin-bottom:8px">매매 세션</div>
-        <div style="display:flex;gap:8px">
-          <label style="flex:1;display:flex;align-items:center;gap:8px;padding:9px 12px;border:1px solid var(--border2);border-radius:8px;cursor:pointer;font-size:12px" id="gdrive-kr-lbl">
-            <input type="radio" name="gdrive-sess" value="kr" checked style="accent-color:var(--green)"> 🇰🇷 한국 (키움)
-          </label>
-          <label style="flex:1;display:flex;align-items:center;gap:8px;padding:9px 12px;border:1px solid var(--border2);border-radius:8px;cursor:pointer;font-size:12px" id="gdrive-us-lbl">
-            <input type="radio" name="gdrive-sess" value="us" style="accent-color:var(--blue)"> 🇺🇸 미국 (나무)
-          </label>
-        </div>
-      </div>
-
-      <!-- 버튼 -->
-      <div style="display:flex;gap:10px;justify-content:flex-end">
-        <button onclick="document.getElementById('gdrive-modal').remove()"
-          style="padding:9px 18px;border-radius:8px;border:1px solid rgba(255,255,255,0.12);background:#181c24;color:var(--muted);font-size:13px;cursor:pointer;font-family:'Noto Sans KR',sans-serif">취소</button>
-        <button onclick="fetchGDriveFile()" id="gdrive-confirm"
-          style="padding:9px 20px;border-radius:8px;border:none;background:#4285f4;color:#fff;font-size:13px;font-weight:600;cursor:pointer;font-family:'Noto Sans KR',sans-serif">불러오기</button>
-      </div>
-    </div>`;
-  document.body.appendChild(modal);
-  document.getElementById('gdrive-url').focus();
-}
-
-// Google Drive 공유 링크 → 다운로드 URL 변환
-function gdriveShareToDownload(shareUrl) {
-  // 형식: https://drive.google.com/file/d/FILE_ID/view?...
-  const m = shareUrl.match(/\/d\/([a-zA-Z0-9_-]+)/);
-  if (!m) throw new Error('올바른 Google Drive 공유 링크가 아닙니다');
-  const fileId = m[1];
-  // CORS 우회: Google Drive 직접 export URL 사용
-  return `https://drive.google.com/uc?export=download&id=${fileId}`;
-}
-
-async function fetchGDriveFile() {
-  const url  = document.getElementById('gdrive-url').value.trim();
-  const sess = document.querySelector('input[name="gdrive-sess"]:checked').value;
-  const btn  = document.getElementById('gdrive-confirm');
-
-  if (!url) {
-    document.getElementById('gdrive-url').style.borderColor = 'var(--red)';
-    return;
-  }
-
-  btn.textContent = '⟳ 다운로드 중...';
-  btn.disabled = true;
-
-  try {
-    const dlUrl = gdriveShareToDownload(url);
-
-    // CORS 이슈가 있을 경우 CORS 프록시 사용
-    const proxyUrl = `https://corsproxy.io/?${encodeURIComponent(dlUrl)}`;
-
-    const res = await fetch(proxyUrl);
-    if (!res.ok) throw new Error(`다운로드 실패 (${res.status}). 파일 공유 설정을 확인하세요.`);
-
-    const text = await res.text();
-
-    document.getElementById('gdrive-modal').remove();
-    processCSVText(text, sess, url);
-
-  } catch(err) {
-    btn.textContent = '불러오기';
-    btn.disabled = false;
-    document.getElementById('gdrive-url').style.borderColor = 'var(--red)';
-    setStatus('⚠ ' + err.message, 'var(--red)');
-
-    // 에러 인라인 표시
-    const errDiv = document.createElement('div');
-    errDiv.style.cssText = 'font-size:11px;color:var(--red);margin-top:8px;padding:8px;background:rgba(248,113,113,0.08);border-radius:6px';
-    errDiv.textContent = '⚠ ' + err.message;
-    document.getElementById('gdrive-confirm').parentElement.before(errDiv);
-  }
-}
-
-// ══════════════════════════════════════════════════
-// 페이지 로드 시 localStorage 복원
+// 페이지 로드 시 초기화
 // ══════════════════════════════════════════════════
 window.addEventListener('load', () => {
-  ['kr', 'us'].forEach(session => {
-    try {
-      const saved     = localStorage.getItem(`trades_${session}`);
-      const savedDate = localStorage.getItem(`trades_${session}_date`);
-      if (!saved) return;
-
-      const trades = JSON.parse(saved);
-      if (!Array.isArray(trades) || trades.length === 0) return;
-
-      if (session === 'kr') { krT.length = 0; krT.push(...trades); }
-      else                  { usT.length = 0; usT.push(...trades); }
-
-      refreshDashboard(session, trades);
-      setConnStatus(session, true, trades.length);
-
-      const syncEl = document.getElementById('sync-time');
-      if (syncEl && savedDate) syncEl.textContent = `마지막 로드: ${savedDate}`;
-
-    } catch(e) {
-      console.warn(`[${session}] localStorage 복원 실패:`, e);
-      localStorage.removeItem(`trades_${session}`);
-    }
+  // 저장된 누적 데이터 복원
+  ['kr','us'].forEach(session => {
+    const all = getAllTrades(session);
+    if (all.length === 0) return;
+    if (session==='kr') { krT.length=0; krT.push(...all.slice(-10)); }
+    else                { usT.length=0; usT.push(...all.slice(-10)); }
+    refreshDashboard(session, all.slice(-10));
+    setConnStatus(session, true, all.length);
+    const syncEl = document.getElementById('sync-time');
+    if (syncEl) syncEl.textContent = `누적 ${all.length}건 로드됨`;
   });
+
+  // Google Drive 자동 동기화 (페이지 로드 시 조용히 확인)
+  setTimeout(() => {
+    syncFromGDrive('kr');
+    syncFromGDrive('us');
+    updateGDriveSyncStatus();
+  }, 2000); // 페이지 완전 로드 후 2초 뒤
+});
+
 });
 
 
