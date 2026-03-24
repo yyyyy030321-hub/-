@@ -4,6 +4,8 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>몰트 매매일지</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 <style>
@@ -92,6 +94,7 @@ body{background:var(--bg);color:var(--text);font-family:'Noto Sans KR',sans-seri
 .tbl td{padding:10px;font-size:12px;border-bottom:1px solid var(--border);vertical-align:middle;}
 .tbl tr:last-child td{border-bottom:none;}
 .tbl tr:hover td{background:rgba(255,255,255,0.02);}
+.tbl{contain:layout style;}   /* 테이블 레이아웃 격리 */
 .tk{font-family:var(--mono);font-weight:500;font-size:12px;}
 .tb{display:inline-block;padding:2px 7px;border-radius:4px;font-size:10px;font-weight:600;font-family:var(--mono);}
 .tb.long{background:rgba(74,222,128,0.12);color:var(--green);}
@@ -223,6 +226,11 @@ body{background:var(--bg);color:var(--text);font-family:'Noto Sans KR',sans-seri
   .gg{grid-template-columns:1fr!important;}
   .kval{font-size:18px;}
   #hmap{grid-template-columns:repeat(2,1fr)!important;}
+}
+/* 모바일: 불필요한 트랜지션/호버 효과 제거로 렌더 부담 감소 */
+@media(hover:none){
+  .kcard,.card,.nav-item,.sess-btn{transition:none!important;}
+  .kcard:hover,.card:hover{border-color:var(--border)!important;}
 }
 
 </style>
@@ -535,7 +543,12 @@ function stab(el, gid) {
   el.classList.add('on');
 }
 
-// chart helpers
+// chart helpers — 전역 기본값 설정
+Chart.defaults.animation.duration = 400;        // 애니메이션 400ms (기본 1000ms → 빠름)
+Chart.defaults.animation.easing = 'easeOutQuart';
+Chart.defaults.plugins.legend.display = false;   // 범례 기본 off
+Chart.defaults.responsive = true;
+Chart.defaults.maintainAspectRatio = false;
 const gc='rgba(255,255,255,0.04)', tc={color:'#6b7280',font:{family:'JetBrains Mono',size:10}}, bc={color:'rgba(255,255,255,0.07)'};
 const tt={backgroundColor:'#181c24',borderColor:'rgba(255,255,255,0.1)',borderWidth:1,titleColor:'#e8eaf0',bodyColor:'#9ca3af',padding:11,titleFont:{family:'Noto Sans KR',size:12},bodyFont:{family:'JetBrains Mono',size:11}};
 
@@ -579,55 +592,26 @@ const usT = [
   {l:'ES1!', entry:5248,  exit:5271,  pnl:575,  ps:'$575',  pl:'$575',  w:true},
 ];
 
-makeEE('kr-ee',krT); makePnl('kr-pnl',krT,'원');
-makeEE('us-ee',usT); makePnl('us-pnl',usT,'USD');
+// 초기 대시보드 차트만 RAF로 분산 렌더링
+requestAnimationFrame(() => {
+  makeEE('kr-ee', krT);
+  makePnl('kr-pnl', krT, '원');
+  requestAnimationFrame(() => {
+    makeEE('us-ee', usT);
+    makePnl('us-pnl', usT, 'USD');
+  });
+});
 
 // 30일 손익
-(()=>{
-  const c=document.getElementById('j-pnl'); if(!c) return;
-  const labels=Array.from({length:30},(_,i)=>{const d=new Date(2025,1,22+i);return `${d.getMonth()+1}/${d.getDate()}`;});
-  const data=[0,320000,150000,890000,720000,1100000,980000,1400000,1250000,1600000,1420000,1800000,2100000,1950000,2350000,2200000,2600000,2400000,2900000,3200000,3050000,3500000,3300000,3700000,4100000,3900000,4400000,4800000,5600000,6284500];
-  const g=c.getContext('2d').createLinearGradient(0,0,0,240); g.addColorStop(0,'rgba(74,222,128,0.2)'); g.addColorStop(1,'rgba(74,222,128,0)');
-  new Chart(c,{type:'line',data:{labels,datasets:[{data,borderColor:'#4ade80',borderWidth:2,backgroundColor:g,fill:true,tension:0.4,pointRadius:0,pointHoverRadius:4,pointHoverBackgroundColor:'#4ade80',pointHoverBorderColor:'#0a0c10',pointHoverBorderWidth:2}]},
-    options:{responsive:true,maintainAspectRatio:false,interaction:{intersect:false,mode:'index'},plugins:{legend:{display:false},tooltip:{...tt,bodyColor:'#4ade80',callbacks:{label:i=>`  +${i.raw.toLocaleString()}원`}}},
-      scales:{x:{grid:{color:gc},ticks:{...tc,maxTicksLimit:8},border:bc},y:{grid:{color:gc},ticks:{...tc,callback:v=>v>=1000000?(v/1000000).toFixed(1)+'M':v>=1000?(v/1000).toFixed(0)+'K':v},border:bc}}}
-  });
-})();
+// j-pnl 차트는 initJournalCharts()에서 실행
 
-// 종목 차트
-makeBar('s-sec',['1','2','3','4','5','6','7','8','9','10','11','12'],[280000,-80000,195000,310000,-60000,240000,175000,-90000,220000,185000,260000,-70000]);
-makeBar('s-nvda',['1','2','3','4','5','6','7','8'],[390,520,-180,610,440,-220,380,510]);
-makeBar('s-fut',['1','2','3','4','5','6','7','8','9','10'],[350000,-185000,420000,-210000,380000,290000,-160000,445000,-190000,310000]);
+// 종목 차트는 initAnalysisCharts()에서 실행
 
-// 요일별 승률
-(()=>{
-  const c=document.getElementById('s-wd'); if(!c) return;
-  new Chart(c,{type:'bar',data:{labels:['월','화','수','목','금'],datasets:[{data:[72,58,68,74,65],backgroundColor:['rgba(74,222,128,0.7)','rgba(96,165,250,0.7)','rgba(74,222,128,0.7)','rgba(74,222,128,0.7)','rgba(251,191,36,0.7)'],borderColor:['#4ade80','#60a5fa','#4ade80','#4ade80','#fbbf24'],borderWidth:1.5,borderRadius:4,barPercentage:0.55}]},
-    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{...tt,callbacks:{label:i=>`  승률 ${i.raw}%`}}},scales:{x:{grid:{color:gc},ticks:tc,border:bc},y:{grid:{color:gc},ticks:{...tc,callback:v=>v+'%'},border:bc,min:40,max:90}}}
-  });
-})();
+// 요일별 승률은 initAnalysisCharts()에서 실행
 
-// 히트맵
-(()=>{
-  const el=document.getElementById('hmap'); if(!el) return;
-  const h=['9시','10시','11시','13시','14시','15시','야간','새벽'];
-  const v=[420000,280000,150000,310000,220000,180000,580000,240000];
-  const mx=Math.max(...v);
-  h.forEach((lbl,i)=>{
-    const pct=v[i]/mx, div=document.createElement('div');
-    div.style.cssText=`background:rgba(74,222,128,${0.08+pct*0.72});border-radius:8px;padding:12px 6px;text-align:center;`;
-    div.innerHTML=`<div style="font-size:10px;color:#6b7280;margin-bottom:4px">${lbl}</div><div style="font-size:11px;font-family:'JetBrains Mono';color:#4ade80;font-weight:500">+${(v[i]/10000).toFixed(0)}만</div>`;
-    el.appendChild(div);
-  });
-})();
+// 히트맵은 initAnalysisCharts()에서 실행
 
-// MDD
-(()=>{
-  const c=document.getElementById('r-mdd'); if(!c) return;
-  new Chart(c,{type:'bar',data:{labels:['10월','11월','12월','1월','2월','3월'],datasets:[{data:[-480000,-620000,-290000,-710000,-380000,-150000],backgroundColor:'rgba(248,113,113,0.65)',borderColor:'#f87171',borderWidth:1.5,borderRadius:4,barPercentage:0.5}]},
-    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{...tt,callbacks:{label:i=>`  MDD ${i.raw.toLocaleString()}원`}}},scales:{x:{grid:{color:gc},ticks:tc,border:bc},y:{grid:{color:gc},ticks:{...tc,callback:v=>v.toLocaleString()},border:bc}}}
-  });
-})();
+// MDD 차트는 initRiskCharts()에서 실행
 
 // ── API 키 관리 (Gemini) ──
 let _apiKey = localStorage.getItem('malt_gemini_key') || '';
@@ -1260,6 +1244,60 @@ window.addEventListener('load', () => {
     }
   });
 });
+
+
+// ── 페이지별 지연 차트 초기화 ──
+function initJournalCharts() {
+  const c = document.getElementById('j-pnl'); if (!c) return;
+  const labels = Array.from({length:30},(_,i)=>{const d=new Date(2025,1,22+i);return `${d.getMonth()+1}/${d.getDate()}`;});
+  const data = [0,320000,150000,890000,720000,1100000,980000,1400000,1250000,1600000,1420000,1800000,2100000,1950000,2350000,2200000,2600000,2400000,2900000,3200000,3050000,3500000,3300000,3700000,4100000,3900000,4400000,4800000,5600000,6284500];
+  const g = c.getContext('2d').createLinearGradient(0,0,0,240);
+  g.addColorStop(0,'rgba(74,222,128,0.2)'); g.addColorStop(1,'rgba(74,222,128,0)');
+  new Chart(c,{type:'line',data:{labels,datasets:[{data,borderColor:'#4ade80',borderWidth:2,backgroundColor:g,fill:true,tension:0.4,pointRadius:0,pointHoverRadius:4,pointHoverBackgroundColor:'#4ade80',pointHoverBorderColor:'#0a0c10',pointHoverBorderWidth:2}]},
+    options:{responsive:true,maintainAspectRatio:false,interaction:{intersect:false,mode:'index'},
+      plugins:{legend:{display:false},tooltip:{...tt,bodyColor:'#4ade80',callbacks:{label:i=>`  +${i.raw.toLocaleString()}원`}}},
+      scales:{x:{grid:{color:gc},ticks:{...tc,maxTicksLimit:8},border:bc},
+              y:{grid:{color:gc},ticks:{...tc,callback:v=>v>=1000000?(v/1000000).toFixed(1)+'M':v>=1000?(v/1000).toFixed(0)+'K':v},border:bc}}}
+  });
+}
+
+function initAnalysisCharts() {
+  makeBar('s-sec',['1','2','3','4','5','6','7','8','9','10','11','12'],[280000,-80000,195000,310000,-60000,240000,175000,-90000,220000,185000,260000,-70000]);
+  makeBar('s-nvda',['1','2','3','4','5','6','7','8'],[390,520,-180,610,440,-220,380,510]);
+  makeBar('s-fut',['1','2','3','4','5','6','7','8','9','10'],[350000,-185000,420000,-210000,380000,290000,-160000,445000,-190000,310000]);
+
+  const cwd = document.getElementById('s-wd'); if (!cwd) return;
+  new Chart(cwd,{type:'bar',data:{labels:['월','화','수','목','금'],
+    datasets:[{data:[72,58,68,74,65],
+      backgroundColor:['rgba(74,222,128,0.7)','rgba(96,165,250,0.7)','rgba(74,222,128,0.7)','rgba(74,222,128,0.7)','rgba(251,191,36,0.7)'],
+      borderColor:['#4ade80','#60a5fa','#4ade80','#4ade80','#fbbf24'],borderWidth:1.5,borderRadius:4,barPercentage:0.55}]},
+    options:{responsive:true,maintainAspectRatio:false,
+      plugins:{legend:{display:false},tooltip:{...tt,callbacks:{label:i=>`  승률 ${i.raw}%`}}},
+      scales:{x:{grid:{color:gc},ticks:tc,border:bc},y:{grid:{color:gc},ticks:{...tc,callback:v=>v+'%'},border:bc,min:40,max:90}}}
+  });
+
+  const el = document.getElementById('hmap'); if (!el || el.children.length > 0) return;
+  const h=['9시','10시','11시','13시','14시','15시','야간','새벽'];
+  const v=[420000,280000,150000,310000,220000,180000,580000,240000];
+  const mx = Math.max(...v);
+  h.forEach((lbl,i)=>{
+    const pct=v[i]/mx, div=document.createElement('div');
+    div.style.cssText=`background:rgba(74,222,128,${(0.08+pct*0.72).toFixed(2)});border-radius:8px;padding:12px 6px;text-align:center`;
+    div.innerHTML=`<div style="font-size:10px;color:#6b7280;margin-bottom:4px">${lbl}</div><div style="font-size:11px;font-family:'JetBrains Mono';color:#4ade80;font-weight:500">+${(v[i]/10000).toFixed(0)}만</div>`;
+    el.appendChild(div);
+  });
+}
+
+function initRiskCharts() {
+  const c = document.getElementById('r-mdd'); if (!c) return;
+  new Chart(c,{type:'bar',data:{labels:['10월','11월','12월','1월','2월','3월'],
+    datasets:[{data:[-480000,-620000,-290000,-710000,-380000,-150000],
+      backgroundColor:'rgba(248,113,113,0.65)',borderColor:'#f87171',borderWidth:1.5,borderRadius:4,barPercentage:0.5}]},
+    options:{responsive:true,maintainAspectRatio:false,
+      plugins:{legend:{display:false},tooltip:{...tt,callbacks:{label:i=>`  MDD ${i.raw.toLocaleString()}원`}}},
+      scales:{x:{grid:{color:gc},ticks:tc,border:bc},y:{grid:{color:gc},ticks:{...tc,callback:v=>v.toLocaleString()},border:bc}}}
+  });
+}
 
 // ── 모바일 사이드바 토글 ──
 function toggleSidebar(){
