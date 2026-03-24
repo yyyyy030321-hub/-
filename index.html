@@ -1260,7 +1260,6 @@ window.addEventListener('load', () => {
     }
   });
 });
-</script>
 
 // ── 모바일 사이드바 토글 ──
 function toggleSidebar(){
@@ -1276,13 +1275,11 @@ function closeSidebar(){
   document.getElementById('hamburger').classList.remove('open');
   document.getElementById('sb-overlay').classList.remove('on');
 }
-
-// 모바일에서 메뉴 클릭 시 자동으로 사이드바 닫기
 document.querySelectorAll('.nav-item, .sess-btn').forEach(el => {
   el.addEventListener('click', () => {
     if(window.innerWidth <= 768) closeSidebar();
   });
 });
-
+</script>
 </body>
 </html>
