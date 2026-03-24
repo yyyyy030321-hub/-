@@ -131,11 +131,111 @@ body{background:var(--bg);color:var(--text);font-family:'Noto Sans KR',sans-seri
 
 /* session sub-views */
 .sv{display:none;} .sv.on{display:block;}
+
+/* ══════════════════════════════════════
+   모바일 햄버거 버튼
+══════════════════════════════════════ */
+.hamburger{
+  display:none;position:fixed;top:14px;left:14px;z-index:200;
+  width:40px;height:40px;border-radius:10px;
+  background:var(--bg2);border:1px solid var(--border2);
+  cursor:pointer;align-items:center;justify-content:center;
+  flex-direction:column;gap:5px;
+}
+.hamburger span{
+  display:block;width:18px;height:2px;background:var(--text);
+  border-radius:2px;transition:all .25s;
+}
+.hamburger.open span:nth-child(1){transform:translateY(7px) rotate(45deg);}
+.hamburger.open span:nth-child(2){opacity:0;}
+.hamburger.open span:nth-child(3){transform:translateY(-7px) rotate(-45deg);}
+
+/* 오버레이 */
+.sb-overlay{
+  display:none;position:fixed;inset:0;background:rgba(0,0,0,0.6);
+  z-index:99;backdrop-filter:blur(2px);
+}
+.sb-overlay.on{display:block;}
+
+/* ══════════════════════════════════════
+   모바일 미디어 쿼리 (768px 이하)
+══════════════════════════════════════ */
+@media(max-width:768px){
+  /* 햄버거 표시 */
+  .hamburger{display:flex;}
+
+  /* 사이드바 숨기고 슬라이드로 */
+  .sidebar{
+    transform:translateX(-100%);
+    transition:transform .28s cubic-bezier(.4,0,.2,1);
+    z-index:100;
+    width:260px;
+    overflow-y:auto;
+  }
+  .sidebar.open{transform:translateX(0);}
+
+  /* 메인 풀너비 */
+  .main{margin-left:0;padding:68px 16px 24px;}
+
+  /* 그리드 전부 1열 */
+  .k3,.k4,.col2,.col2e,.col3g{grid-template-columns:1fr!important;}
+
+  /* 페이지 헤더 */
+  .phdr{flex-direction:column;gap:10px;}
+  .acts{flex-wrap:wrap;}
+
+  /* 차트 높이 축소 */
+  .h200{height:160px;}
+  .h240{height:180px;}
+
+  /* 테이블 스크롤 */
+  .card.np{overflow-x:auto;}
+  .tbl{min-width:520px;}
+
+  /* 범례 줄바꿈 */
+  .leg-row{flex-wrap:wrap;gap:8px;}
+
+  /* Greeks 그리드 */
+  .gg{grid-template-columns:1fr 1fr;}
+
+  /* 탭 스크롤 */
+  .tabs{overflow-x:auto;width:100%;}
+
+  /* KPI 카드 글자 크기 */
+  .kval{font-size:20px;}
+
+  /* 페이지 제목 */
+  .ptitle{font-size:17px;}
+
+  /* 히트맵 */
+  #hmap{grid-template-columns:repeat(4,1fr)!important;}
+
+  /* 리스크 미터 */
+  .rmeter{padding:10px 12px;}
+
+  /* AI 일지 */
+  .ai-body{padding:14px 16px;}
+  .ai-top{padding:12px 16px;}
+}
+
+@media(max-width:420px){
+  .k3,.k4{grid-template-columns:1fr!important;}
+  .gg{grid-template-columns:1fr!important;}
+  .kval{font-size:18px;}
+  #hmap{grid-template-columns:repeat(2,1fr)!important;}
+}
+
 </style>
 </head>
 <body>
 
-<nav class="sidebar">
+<!-- 모바일 햄버거 버튼 -->
+<div class="hamburger" id="hamburger" onclick="toggleSidebar()">
+  <span></span><span></span><span></span>
+</div>
+<div class="sb-overlay" id="sb-overlay" onclick="closeSidebar()"></div>
+
+<nav class="sidebar" id="sidebar">
   <div class="logo">
     <div class="logo-name">몰트 <span class="logo-tag">AI</span></div>
     <div class="logo-sub">매매일지 대시보드</div>
@@ -1161,5 +1261,28 @@ window.addEventListener('load', () => {
   });
 });
 </script>
+
+// ── 모바일 사이드바 토글 ──
+function toggleSidebar(){
+  const sb  = document.getElementById('sidebar');
+  const hb  = document.getElementById('hamburger');
+  const ov  = document.getElementById('sb-overlay');
+  const open = sb.classList.toggle('open');
+  hb.classList.toggle('open', open);
+  ov.classList.toggle('on',   open);
+}
+function closeSidebar(){
+  document.getElementById('sidebar').classList.remove('open');
+  document.getElementById('hamburger').classList.remove('open');
+  document.getElementById('sb-overlay').classList.remove('on');
+}
+
+// 모바일에서 메뉴 클릭 시 자동으로 사이드바 닫기
+document.querySelectorAll('.nav-item, .sess-btn').forEach(el => {
+  el.addEventListener('click', () => {
+    if(window.innerWidth <= 768) closeSidebar();
+  });
+});
+
 </body>
 </html>
