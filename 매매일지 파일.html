@@ -1,0 +1,1165 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta http-equiv="Content-Style-Type" content="text/css">
+  <title></title>
+  <meta name="Generator" content="Cocoa HTML Writer">
+  <meta name="CocoaVersion" content="2685.3">
+  <style type="text/css">
+    p.p1 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica}
+    p.p2 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; min-height: 14.0px}
+  </style>
+</head>
+<body>
+<p class="p1">&lt;!DOCTYPE html&gt;</p>
+<p class="p1">&lt;html lang="ko"&gt;</p>
+<p class="p1">&lt;head&gt;</p>
+<p class="p1">&lt;meta charset="UTF-8"&gt;</p>
+<p class="p1">&lt;meta name="viewport" content="width=device-width, initial-scale=1.0"&gt;</p>
+<p class="p1">&lt;title&gt;몰트 매매일지&lt;/title&gt;</p>
+<p class="p1">&lt;link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&amp;family=JetBrains+Mono:wght@400;500&amp;display=swap" rel="stylesheet"&gt;</p>
+<p class="p1">&lt;script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"&gt;&lt;/script&gt;</p>
+<p class="p1">&lt;style&gt;</p>
+<p class="p1">:root{--bg:#0a0c10;--bg2:#111318;--bg3:#181c24;--border:rgba(255,255,255,0.07);--border2:rgba(255,255,255,0.13);--text:#e8eaf0;--muted:#6b7280;--green:#4ade80;--green2:#22c55e;--red:#f87171;--blue:#60a5fa;--amber:#fbbf24;--purple:#a78bfa;--r:14px;--mono:'JetBrains Mono',monospace;}</p>
+<p class="p1">*{margin:0;padding:0;box-sizing:border-box;}</p>
+<p class="p1">body{background:var(--bg);color:var(--text);font-family:'Noto Sans KR',sans-serif;font-size:14px;line-height:1.6;min-height:100vh;}</p>
+<p class="p2"><br></p>
+<p class="p1">.sidebar{position:fixed;left:0;top:0;bottom:0;width:230px;background:var(--bg2);border-right:1px solid var(--border);display:flex;flex-direction:column;z-index:10;padding:24px 0;}</p>
+<p class="p1">.logo{padding:0 22px 20px;border-bottom:1px solid var(--border);margin-bottom:14px;}</p>
+<p class="p1">.logo-name{font-size:17px;font-weight:700;letter-spacing:-.5px;}</p>
+<p class="p1">.logo-tag{display:inline-block;background:var(--green);color:#071407;font-size:9px;font-weight:700;padding:2px 5px;border-radius:3px;margin-left:5px;vertical-align:2px;}</p>
+<p class="p1">.logo-sub{font-size:11px;color:var(--muted);margin-top:3px;}</p>
+<p class="p1">.sec-lbl{padding:0 22px 7px;font-size:10px;color:var(--muted);letter-spacing:.8px;text-transform:uppercase;font-weight:500;}</p>
+<p class="p1">.sess-btn{display:flex;align-items:center;gap:10px;padding:10px 22px;cursor:pointer;color:var(--muted);font-size:13px;border-left:2px solid transparent;transition:all .15s;}</p>
+<p class="p1">.sess-btn:hover{color:var(--text);background:rgba(255,255,255,0.03);}</p>
+<p class="p1">.sess-btn.on-kr{color:var(--green);border-left-color:var(--green);background:rgba(74,222,128,0.06);font-weight:500;}</p>
+<p class="p1">.sess-btn.on-us{color:var(--blue);border-left-color:var(--blue);background:rgba(96,165,250,0.06);font-weight:500;}</p>
+<p class="p1">.smeta{font-size:10px;color:var(--muted);margin-top:1px;}</p>
+<p class="p1">.nav-sep{margin:12px 22px;border:none;border-top:1px solid var(--border);}</p>
+<p class="p1">.nav-item{display:flex;align-items:center;gap:10px;padding:9px 22px;cursor:pointer;color:var(--muted);font-size:13px;border-left:2px solid transparent;transition:all .15s;user-select:none;}</p>
+<p class="p1">.nav-item:hover{color:var(--text);background:rgba(255,255,255,0.03);}</p>
+<p class="p1">.nav-item.on{color:var(--text);border-left-color:var(--green);background:rgba(74,222,128,0.05);font-weight:500;}</p>
+<p class="p1">.sfoot{margin-top:auto;padding:14px 22px;border-top:1px solid var(--border);}</p>
+<p class="p1">.conn{display:flex;align-items:center;gap:7px;font-size:11px;color:var(--muted);margin-bottom:3px;}</p>
+<p class="p1">.dot{width:6px;height:6px;border-radius:50%;background:var(--green);box-shadow:0 0 5px var(--green);animation:pulse 2s infinite;}</p>
+<p class="p1">.dot.us{background:var(--blue);box-shadow:0 0 5px var(--blue);}</p>
+<p class="p1">@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}</p>
+<p class="p2"><br></p>
+<p class="p1">.main{margin-left:230px;padding:28px 32px;}</p>
+<p class="p1">.page{display:none;} .page.on{display:block;}</p>
+<p class="p2"><br></p>
+<p class="p1">.phdr{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:22px;}</p>
+<p class="p1">.ptitle{font-size:20px;font-weight:700;letter-spacing:-.5px;display:flex;align-items:center;gap:10px;}</p>
+<p class="p1">.psub{font-size:12px;color:var(--muted);margin-top:3px;}</p>
+<p class="p1">.pill{font-size:11px;font-weight:600;padding:3px 10px;border-radius:20px;letter-spacing:.3px;}</p>
+<p class="p1">.pill-kr{background:rgba(74,222,128,0.12);color:var(--green);}</p>
+<p class="p1">.pill-us{background:rgba(96,165,250,0.12);color:var(--blue);}</p>
+<p class="p1">.pill-ai{background:rgba(167,139,250,0.12);color:var(--purple);}</p>
+<p class="p1">.pill-risk{background:rgba(248,113,113,0.12);color:var(--red);}</p>
+<p class="p1">.pill-ana{background:rgba(251,191,36,0.12);color:var(--amber);}</p>
+<p class="p1">.acts{display:flex;gap:8px;align-items:center;}</p>
+<p class="p1">.btn{padding:7px 14px;border-radius:8px;font-size:12px;font-weight:500;cursor:pointer;border:none;font-family:'Noto Sans KR',sans-serif;transition:all .15s;}</p>
+<p class="p1">.btn-g{background:var(--bg3);color:var(--muted);border:1px solid var(--border2);}</p>
+<p class="p1">.btn-g:hover{color:var(--text);}</p>
+<p class="p1">.btn-green{background:var(--green);color:#071407;}</p>
+<p class="p1">.btn-green:hover{background:var(--green2);}</p>
+<p class="p1">.btn-blue{background:var(--blue);color:#040f1c;}</p>
+<p class="p1">.btn-blue:hover{background:#3b82f6;}</p>
+<p class="p2"><br></p>
+<p class="p1">.kgrid{display:grid;gap:14px;margin-bottom:18px;}</p>
+<p class="p1">.k3{grid-template-columns:repeat(3,1fr);}</p>
+<p class="p1">.k4{grid-template-columns:repeat(4,1fr);}</p>
+<p class="p1">.kcard{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);padding:18px 20px;position:relative;overflow:hidden;transition:border-color .2s;}</p>
+<p class="p1">.kcard:hover{border-color:var(--border2);}</p>
+<p class="p1">.kcard::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:var(--ac,var(--green));opacity:.7;}</p>
+<p class="p1">.kcard.cr::before{--ac:var(--red);} .kcard.cb::before{--ac:var(--blue);} .kcard.ca::before{--ac:var(--amber);} .kcard.cp::before{--ac:var(--purple);}</p>
+<p class="p1">.klbl{font-size:11px;color:var(--muted);margin-bottom:7px;letter-spacing:.3px;}</p>
+<p class="p1">.kval{font-size:23px;font-weight:700;font-family:var(--mono);letter-spacing:-1px;line-height:1;margin-bottom:6px;}</p>
+<p class="p1">.kval.up{color:var(--green);} .kval.dn{color:var(--red);} .kval.n{color:var(--text);}</p>
+<p class="p1">.ksub{display:flex;align-items:center;gap:5px;font-size:11px;color:var(--muted);}</p>
+<p class="p1">.badge{padding:2px 6px;border-radius:4px;font-size:10px;font-weight:600;font-family:var(--mono);}</p>
+<p class="p1">.badge.up{background:rgba(74,222,128,0.12);color:var(--green);}</p>
+<p class="p1">.badge.dn{background:rgba(248,113,113,0.12);color:var(--red);}</p>
+<p class="p2"><br></p>
+<p class="p1">.card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);padding:20px;transition:border-color .2s;margin-bottom:0;}</p>
+<p class="p1">.card:hover{border-color:var(--border2);}</p>
+<p class="p1">.card.np{padding:0;overflow:hidden;}</p>
+<p class="p1">.chdr{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:16px;}</p>
+<p class="p1">.chdr.p{padding:18px 20px 14px;}</p>
+<p class="p1">.ctitle{font-size:13px;font-weight:600;}</p>
+<p class="p1">.csub{font-size:11px;color:var(--muted);margin-top:2px;}</p>
+<p class="p1">.col2{display:grid;grid-template-columns:1.6fr 1fr;gap:14px;margin-bottom:14px;}</p>
+<p class="p1">.col2e{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px;}</p>
+<p class="p1">.col3g{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;margin-bottom:14px;}</p>
+<p class="p1">.col1{margin-bottom:14px;}</p>
+<p class="p1">.h200{height:200px;position:relative;}</p>
+<p class="p1">.h240{height:240px;position:relative;}</p>
+<p class="p2"><br></p>
+<p class="p1">.tabs{display:flex;gap:3px;background:var(--bg3);padding:3px;border-radius:8px;width:fit-content;margin-bottom:16px;border:1px solid var(--border);}</p>
+<p class="p1">.tab{padding:5px 14px;border-radius:6px;font-size:12px;cursor:pointer;color:var(--muted);transition:all .15s;}</p>
+<p class="p1">.tab:hover{color:var(--text);}</p>
+<p class="p1">.tab.on{background:var(--bg2);color:var(--text);font-weight:500;}</p>
+<p class="p2"><br></p>
+<p class="p1">.tbl{width:100%;border-collapse:collapse;}</p>
+<p class="p1">.tbl th{text-align:left;font-size:10px;color:var(--muted);font-weight:500;padding:0 10px 10px;letter-spacing:.5px;text-transform:uppercase;border-bottom:1px solid var(--border);}</p>
+<p class="p1">.tbl td{padding:10px;font-size:12px;border-bottom:1px solid var(--border);vertical-align:middle;}</p>
+<p class="p1">.tbl tr:last-child td{border-bottom:none;}</p>
+<p class="p1">.tbl tr:hover td{background:rgba(255,255,255,0.02);}</p>
+<p class="p1">.tk{font-family:var(--mono);font-weight:500;font-size:12px;}</p>
+<p class="p1">.tb{display:inline-block;padding:2px 7px;border-radius:4px;font-size:10px;font-weight:600;font-family:var(--mono);}</p>
+<p class="p1">.tb.long{background:rgba(74,222,128,0.12);color:var(--green);}</p>
+<p class="p1">.tb.short{background:rgba(248,113,113,0.12);color:var(--red);}</p>
+<p class="p1">.tb.fut{background:rgba(96,165,250,0.12);color:var(--blue);}</p>
+<p class="p1">.tb.opt{background:rgba(167,139,250,0.12);color:var(--purple);}</p>
+<p class="p1">.pu{color:var(--green);font-family:var(--mono);font-weight:500;}</p>
+<p class="p1">.pd{color:var(--red);font-family:var(--mono);font-weight:500;}</p>
+<p class="p1">.mn{font-family:var(--mono);font-size:11px;color:var(--text);}</p>
+<p class="p2"><br></p>
+<p class="p1">.gg{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;}</p>
+<p class="p1">.gr{background:var(--bg3);border-radius:8px;padding:12px 14px;display:flex;flex-direction:column;gap:3px;}</p>
+<p class="p1">.gn{font-size:10px;color:var(--muted);letter-spacing:.5px;font-weight:500;}</p>
+<p class="p1">.gv{font-size:17px;font-weight:700;font-family:var(--mono);letter-spacing:-1px;}</p>
+<p class="p1">.gd{font-size:10px;color:var(--muted);line-height:1.4;margin-top:1px;}</p>
+<p class="p1">.gbw{height:3px;background:rgba(255,255,255,0.07);border-radius:2px;margin-top:3px;}</p>
+<p class="p1">.gb{height:3px;border-radius:2px;}</p>
+<p class="p2"><br></p>
+<p class="p1">.ai-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;margin-bottom:14px;}</p>
+<p class="p1">.ai-top{padding:16px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;}</p>
+<p class="p1">.ai-badge{display:flex;align-items:center;gap:5px;font-size:10px;font-weight:600;color:var(--purple);background:rgba(167,139,250,0.1);padding:3px 9px;border-radius:5px;}</p>
+<p class="p1">.ai-body{padding:16px 20px;}</p>
+<p class="p1">.ai-date{font-size:10px;color:var(--muted);margin-bottom:10px;font-family:var(--mono);}</p>
+<p class="p1">.ai-text{font-size:13px;line-height:1.85;font-weight:300;}</p>
+<p class="p1">.ai-text strong{font-weight:600;color:var(--green);}</p>
+<p class="p1">.ai-ins{margin-top:12px;padding:12px 14px;background:rgba(167,139,250,0.06);border:1px solid rgba(167,139,250,0.14);border-radius:8px;font-size:12px;color:var(--muted);line-height:1.7;}</p>
+<p class="p1">.ai-ins-t{font-size:10px;font-weight:600;color:var(--purple);margin-bottom:4px;letter-spacing:.4px;}</p>
+<p class="p2"><br></p>
+<p class="p1">.rmeter{background:var(--bg3);border-radius:10px;padding:12px 14px;margin-bottom:10px;}</p>
+<p class="p1">.rtrack{height:8px;background:rgba(255,255,255,0.07);border-radius:4px;overflow:hidden;margin:6px 0;}</p>
+<p class="p1">.rfill{height:100%;border-radius:4px;}</p>
+<p class="p1">.rlbl{display:flex;justify-content:space-between;font-size:11px;color:var(--muted);}</p>
+<p class="p2"><br></p>
+<p class="p1">.leg-row{display:flex;gap:14px;align-items:center;}</p>
+<p class="p1">.leg{display:flex;align-items:center;gap:5px;font-size:11px;color:var(--muted);}</p>
+<p class="p1">.ldot{width:8px;height:8px;border-radius:2px;flex-shrink:0;}</p>
+<p class="p2"><br></p>
+<p class="p1">/* session sub-views */</p>
+<p class="p1">.sv{display:none;} .sv.on{display:block;}</p>
+<p class="p1">&lt;/style&gt;</p>
+<p class="p1">&lt;/head&gt;</p>
+<p class="p1">&lt;body&gt;</p>
+<p class="p2"><br></p>
+<p class="p1">&lt;nav class="sidebar"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;div class="logo"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;div class="logo-name"&gt;몰트 &lt;span class="logo-tag"&gt;AI&lt;/span&gt;&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;div class="logo-sub"&gt;매매일지 대시보드&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;div class="sec-lbl"&gt;세션&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;div class="sess-btn on-kr" id="sb-kr" onclick="setSession('kr')"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;span style="font-size:15px"&gt;🇰🇷&lt;/span&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;div&gt;&lt;div&gt;한국 시장&lt;/div&gt;&lt;div class="smeta"&gt;주식 · 옵션 · 09:00–15:30&lt;/div&gt;&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;div class="sess-btn" id="sb-us" onclick="setSession('us')"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;span style="font-size:15px"&gt;🇺🇸&lt;/span&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;div&gt;&lt;div&gt;미국 시장&lt;/div&gt;&lt;div class="smeta"&gt;주식 · 옵션 · 선물 · 야간&lt;/div&gt;&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;hr class="nav-sep"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;div class="sec-lbl"&gt;메뉴&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;div class="nav-item on"<span class="Apple-converted-space">  </span>id="ni-dashboard" onclick="goPage('dashboard',this)"&gt;&lt;span&gt;◈&lt;/span&gt; 대시보드&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;div class="nav-item" <span class="Apple-converted-space">    </span>id="ni-trades"<span class="Apple-converted-space">    </span>onclick="goPage('trades',this)"&gt;&lt;span&gt;◫&lt;/span&gt; 매매 내역&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;div class="nav-item" <span class="Apple-converted-space">    </span>id="ni-aijournal" onclick="goPage('aijournal',this)"&gt;&lt;span&gt;✦&lt;/span&gt; AI 일지&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;div class="nav-item" <span class="Apple-converted-space">    </span>id="ni-analysis"<span class="Apple-converted-space">  </span>onclick="goPage('analysis',this)"&gt;&lt;span&gt;◎&lt;/span&gt; 종목 분석&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;div class="nav-item" <span class="Apple-converted-space">    </span>id="ni-risk"<span class="Apple-converted-space">      </span>onclick="goPage('risk',this)"&gt;&lt;span&gt;◉&lt;/span&gt; 리스크 관리&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;div style="padding:14px 20px;border-top:1px solid var(--border);"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;div style="font-size:10px;color:var(--muted);letter-spacing:.7px;text-transform:uppercase;margin-bottom:10px;font-weight:500"&gt;데이터 가져오기&lt;/div&gt;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;label style="display:block;border:1px dashed rgba(74,222,128,0.3);border-radius:8px;padding:9px 10px;text-align:center;cursor:pointer;font-size:11px;color:var(--muted);transition:all .2s;margin-bottom:7px;background:rgba(74,222,128,0.03)" id="lbl-kr"</p>
+<p class="p1"><span class="Apple-converted-space">      </span>onmouseover="this.style.borderColor='var(--green)';this.style.color='var(--green)'"</p>
+<p class="p1"><span class="Apple-converted-space">      </span>onmouseout="this.style.borderColor='rgba(74,222,128,0.3)';this.style.color='var(--muted)'"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>🇰🇷 키움증권 CSV</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;input type="file" accept=".csv,.xls,.xlsx" style="display:none" onchange="loadCSV(event,'kr')"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;/label&gt;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;label style="display:block;border:1px dashed rgba(96,165,250,0.3);border-radius:8px;padding:9px 10px;text-align:center;cursor:pointer;font-size:11px;color:var(--muted);transition:all .2s;margin-bottom:7px;background:rgba(96,165,250,0.03)" id="lbl-us"</p>
+<p class="p1"><span class="Apple-converted-space">      </span>onmouseover="this.style.borderColor='var(--blue)';this.style.color='var(--blue)'"</p>
+<p class="p1"><span class="Apple-converted-space">      </span>onmouseout="this.style.borderColor='rgba(96,165,250,0.3)';this.style.color='var(--muted)'"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>🇺🇸 나무증권 CSV</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;input type="file" accept=".csv,.xls,.xlsx" style="display:none" onchange="loadCSV(event,'us')"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;/label&gt;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;button onclick="openGDrivePicker()" style="width:100%;border:1px dashed rgba(66,133,244,0.35);border-radius:8px;padding:9px 10px;text-align:center;cursor:pointer;font-size:11px;color:var(--muted);background:rgba(66,133,244,0.03);font-family:'Noto Sans KR',sans-serif;transition:all .2s;margin-bottom:8px"</p>
+<p class="p1"><span class="Apple-converted-space">      </span>onmouseover="this.style.borderColor='#4285f4';this.style.color='#4285f4'"</p>
+<p class="p1"><span class="Apple-converted-space">      </span>onmouseout="this.style.borderColor='rgba(66,133,244,0.35)';this.style.color='var(--muted)'"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>☁ Google Drive 연동</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;/button&gt;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;div id="csv-status" style="font-size:10px;color:var(--muted);text-align:center;min-height:14px;"&gt;&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;/div&gt;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;div class="sfoot"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;div class="conn"&gt;&lt;div class="dot" id="dot-kr"&gt;&lt;/div&gt;&lt;span id="conn-kr-txt"&gt;키움증권 대기중&lt;/span&gt;&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;div class="conn"&gt;&lt;div class="dot us" id="dot-us"&gt;&lt;/div&gt;&lt;span id="conn-us-txt"&gt;나무증권 대기중&lt;/span&gt;&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;div style="font-size:10px;color:var(--muted);opacity:.5;margin-top:3px" id="sync-time"&gt;데이터 미로드&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;/div&gt;</p>
+<p class="p1">&lt;/nav&gt;</p>
+<p class="p2"><br></p>
+<p class="p1">&lt;main class="main"&gt;</p>
+<p class="p2"><br></p>
+<p class="p1">&lt;div id="page-dashboard" class="page on"&gt;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;div id="dash-kr" class="sv on"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;div class="phdr"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;div&gt;&lt;div class="ptitle"&gt;한국 시장 &lt;span class="pill pill-kr"&gt;KR&lt;/span&gt;&lt;/div&gt;&lt;div class="psub"&gt;2025.03.23 (월) · 09:00–15:30 KST · 장 마감&lt;/div&gt;&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;div class="acts"&gt;&lt;button class="btn btn-g"&gt;📥 동기화&lt;/button&gt;&lt;button class="btn btn-green" onclick="genJournal('kr',event)"&gt;✦ AI 일지 작성&lt;/button&gt;&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;div class="kgrid k3"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;div class="kcard"&gt;&lt;div class="klbl"&gt;오늘 실현손익 (KRW)&lt;/div&gt;&lt;div class="kval up"&gt;+842,300&lt;/div&gt;&lt;div class="ksub"&gt;&lt;span class="badge up"&gt;+2.34%&lt;/span&gt;전일 대비&lt;/div&gt;&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;div class="kcard cr"&gt;&lt;div class="klbl"&gt;승률&lt;/div&gt;&lt;div class="kval n"&gt;68.4%&lt;/div&gt;&lt;div class="ksub"&gt;&lt;span class="badge up"&gt;+3.2%p&lt;/span&gt;이번달 평균&lt;/div&gt;&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;div class="kcard cb"&gt;&lt;div class="klbl"&gt;매매 횟수&lt;/div&gt;&lt;div class="kval n"&gt;13&lt;/div&gt;&lt;div class="ksub" style="color:var(--muted)"&gt;익절 9 / 손절 4&lt;/div&gt;&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;div class="tabs" id="t-krd"&gt;&lt;div class="tab on" onclick="stab(this,'t-krd')"&gt;주식&lt;/div&gt;&lt;div class="tab" onclick="stab(this,'t-krd')"&gt;옵션&lt;/div&gt;&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;div class="col2"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;div class="card"&gt;&lt;div class="chdr"&gt;&lt;div&gt;&lt;div class="ctitle"&gt;종목별 진입가 · 청산가&lt;/div&gt;&lt;div class="csub"&gt;진입가 100 기준 정규화&lt;/div&gt;&lt;/div&gt;&lt;div class="leg-row"&gt;&lt;div class="leg"&gt;&lt;div class="ldot" style="background:#60a5fa"&gt;&lt;/div&gt;진입&lt;/div&gt;&lt;div class="leg"&gt;&lt;div class="ldot" style="background:#4ade80"&gt;&lt;/div&gt;익절&lt;/div&gt;&lt;div class="leg"&gt;&lt;div class="ldot" style="background:#f87171"&gt;&lt;/div&gt;손절&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;&lt;div class="h200"&gt;&lt;canvas id="kr-ee"&gt;&lt;/canvas&gt;&lt;/div&gt;&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;div class="card"&gt;&lt;div class="chdr"&gt;&lt;div&gt;&lt;div class="ctitle"&gt;종목별 손익&lt;/div&gt;&lt;div class="csub"&gt;오늘 체결&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;&lt;div class="h200"&gt;&lt;canvas id="kr-pnl"&gt;&lt;/canvas&gt;&lt;/div&gt;&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;div class="col2"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;div class="card np"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;div class="chdr p"&gt;&lt;div&gt;&lt;div class="ctitle"&gt;오늘 매매 내역&lt;/div&gt;&lt;div class="csub"&gt;13건 체결&lt;/div&gt;&lt;/div&gt;&lt;button class="btn btn-g" style="font-size:11px;padding:5px 10px" onclick="goPage('trades',document.getElementById('ni-trades'))"&gt;전체 보기&lt;/button&gt;&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;table class="tbl"&gt;&lt;thead&gt;&lt;tr&gt;&lt;th&gt;종목&lt;/th&gt;&lt;th&gt;구분&lt;/th&gt;&lt;th&gt;진입가&lt;/th&gt;&lt;th&gt;청산가&lt;/th&gt;&lt;th&gt;손익&lt;/th&gt;&lt;/tr&gt;&lt;/thead&gt;&lt;tbody&gt;</p>
+<p class="p1"><span class="Apple-converted-space">          </span>&lt;tr&gt;&lt;td&gt;&lt;div class="tk"&gt;삼성전자&lt;/div&gt;&lt;div style="font-size:10px;color:var(--muted)"&gt;09:15→10:02&lt;/div&gt;&lt;/td&gt;&lt;td&gt;&lt;span class="tb long"&gt;매수&lt;/span&gt;&lt;/td&gt;&lt;td class="mn"&gt;72,400&lt;/td&gt;&lt;td class="mn"&gt;73,100&lt;/td&gt;&lt;td class="pu"&gt;+280,000&lt;/td&gt;&lt;/tr&gt;</p>
+<p class="p1"><span class="Apple-converted-space">          </span>&lt;tr&gt;&lt;td&gt;&lt;div class="tk"&gt;SK하이닉스&lt;/div&gt;&lt;div style="font-size:10px;color:var(--muted)"&gt;11:40→12:10&lt;/div&gt;&lt;/td&gt;&lt;td&gt;&lt;span class="tb long"&gt;매수&lt;/span&gt;&lt;/td&gt;&lt;td class="mn"&gt;182,000&lt;/td&gt;&lt;td class="mn"&gt;180,500&lt;/td&gt;&lt;td class="pd"&gt;-150,000&lt;/td&gt;&lt;/tr&gt;</p>
+<p class="p1"><span class="Apple-converted-space">          </span>&lt;tr&gt;&lt;td&gt;&lt;div class="tk"&gt;NAVER&lt;/div&gt;&lt;div style="font-size:10px;color:var(--muted)"&gt;13:05→13:48&lt;/div&gt;&lt;/td&gt;&lt;td&gt;&lt;span class="tb long"&gt;매수&lt;/span&gt;&lt;/td&gt;&lt;td class="mn"&gt;188,500&lt;/td&gt;&lt;td class="mn"&gt;190,000&lt;/td&gt;&lt;td class="pu"&gt;+225,000&lt;/td&gt;&lt;/tr&gt;</p>
+<p class="p1"><span class="Apple-converted-space">          </span>&lt;tr&gt;&lt;td&gt;&lt;div class="tk"&gt;카카오&lt;/div&gt;&lt;div style="font-size:10px;color:var(--muted)"&gt;14:10→14:55&lt;/div&gt;&lt;/td&gt;&lt;td&gt;&lt;span class="tb short"&gt;매도&lt;/span&gt;&lt;/td&gt;&lt;td class="mn"&gt;39,200&lt;/td&gt;&lt;td class="mn"&gt;38,700&lt;/td&gt;&lt;td class="pu"&gt;+125,000&lt;/td&gt;&lt;/tr&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;/tbody&gt;&lt;/table&gt;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;div class="card"&gt;&lt;div class="chdr"&gt;&lt;div&gt;&lt;div class="ctitle"&gt;KOSPI200 옵션 Greeks&lt;/div&gt;&lt;div class="csub"&gt;현재 보유 포지션&lt;/div&gt;&lt;/div&gt;&lt;span class="tb opt"&gt;PUT 380&lt;/span&gt;&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;div class="gg"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">          </span>&lt;div class="gr"&gt;&lt;div class="gn"&gt;DELTA (δ)&lt;/div&gt;&lt;div class="gv" style="color:var(--red)"&gt;-0.42&lt;/div&gt;&lt;div class="gbw"&gt;&lt;div class="gb" style="width:42%;background:var(--red)"&gt;&lt;/div&gt;&lt;/div&gt;&lt;div class="gd"&gt;기초자산 1p↑ → -0.42p&lt;/div&gt;&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">          </span>&lt;div class="gr"&gt;&lt;div class="gn"&gt;GAMMA (γ)&lt;/div&gt;&lt;div class="gv" style="color:var(--amber)"&gt;0.018&lt;/div&gt;&lt;div class="gbw"&gt;&lt;div class="gb" style="width:18%;background:var(--amber)"&gt;&lt;/div&gt;&lt;/div&gt;&lt;div class="gd"&gt;델타 변화 속도&lt;/div&gt;&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">          </span>&lt;div class="gr"&gt;&lt;div class="gn"&gt;THETA (θ)&lt;/div&gt;&lt;div class="gv" style="color:var(--purple)"&gt;-12.4&lt;/div&gt;&lt;div class="gbw"&gt;&lt;div class="gb" style="width:62%;background:var(--purple)"&gt;&lt;/div&gt;&lt;/div&gt;&lt;div class="gd"&gt;하루 시간가치 -12.4원&lt;/div&gt;&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">          </span>&lt;div class="gr"&gt;&lt;div class="gn"&gt;VEGA (ν)&lt;/div&gt;&lt;div class="gv" style="color:var(--blue)"&gt;28.6&lt;/div&gt;&lt;div class="gbw"&gt;&lt;div class="gb" style="width:57%;background:var(--blue)"&gt;&lt;/div&gt;&lt;/div&gt;&lt;div class="gd"&gt;IV 1%↑ → +28.6원&lt;/div&gt;&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">          </span>&lt;div class="gr" style="grid-column:span 2"&gt;&lt;div class="gn"&gt;IMPLIED VOLATILITY&lt;/div&gt;&lt;div class="gv" style="color:var(--text)"&gt;18.3%&lt;/div&gt;&lt;div class="gbw"&gt;&lt;div class="gb" style="width:36%;background:var(--green)"&gt;&lt;/div&gt;&lt;/div&gt;&lt;div class="gd"&gt;역사적 변동성 대비 낮음 · 옵션 매도 불리&lt;/div&gt;&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;/div&gt;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;div id="dash-us" class="sv"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;div class="phdr"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;div&gt;&lt;div class="ptitle"&gt;미국 시장 &lt;span class="pill pill-us"&gt;US&lt;/span&gt;&lt;/div&gt;&lt;div class="psub"&gt;2025.03.22 (금) · 22:30–05:00 KST · 야간 마감&lt;/div&gt;&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;div class="acts"&gt;&lt;button class="btn btn-g"&gt;📥 동기화&lt;/button&gt;&lt;button class="btn btn-blue" onclick="genJournal('us',event)"&gt;✦ AI 일지 작성&lt;/button&gt;&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;div class="kgrid k3"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;div class="kcard cb"&gt;&lt;div class="klbl"&gt;오늘 실현손익 (USD)&lt;/div&gt;&lt;div class="kval up" style="color:var(--blue)"&gt;+$1,248&lt;/div&gt;&lt;div class="ksub"&gt;&lt;span class="badge up"&gt;+3.12%&lt;/span&gt;전일 대비&lt;/div&gt;&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;div class="kcard cr"&gt;&lt;div class="klbl"&gt;승률&lt;/div&gt;&lt;div class="kval n"&gt;72.7%&lt;/div&gt;&lt;div class="ksub"&gt;&lt;span class="badge up"&gt;+5.1%p&lt;/span&gt;이번달 평균&lt;/div&gt;&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;div class="kcard cp"&gt;&lt;div class="klbl"&gt;매매 횟수&lt;/div&gt;&lt;div class="kval n"&gt;11&lt;/div&gt;&lt;div class="ksub" style="color:var(--muted)"&gt;익절 8 / 손절 3&lt;/div&gt;&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;div class="tabs" id="t-usd"&gt;&lt;div class="tab on" onclick="stab(this,'t-usd')"&gt;주식&lt;/div&gt;&lt;div class="tab" onclick="stab(this,'t-usd')"&gt;옵션&lt;/div&gt;&lt;div class="tab" onclick="stab(this,'t-usd')"&gt;선물&lt;/div&gt;&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;div class="col2"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;div class="card"&gt;&lt;div class="chdr"&gt;&lt;div&gt;&lt;div class="ctitle"&gt;종목별 진입가 · 청산가&lt;/div&gt;&lt;div class="csub"&gt;진입가 100 기준 정규화&lt;/div&gt;&lt;/div&gt;&lt;div class="leg-row"&gt;&lt;div class="leg"&gt;&lt;div class="ldot" style="background:#60a5fa"&gt;&lt;/div&gt;진입&lt;/div&gt;&lt;div class="leg"&gt;&lt;div class="ldot" style="background:#4ade80"&gt;&lt;/div&gt;익절&lt;/div&gt;&lt;div class="leg"&gt;&lt;div class="ldot" style="background:#f87171"&gt;&lt;/div&gt;손절&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;&lt;div class="h200"&gt;&lt;canvas id="us-ee"&gt;&lt;/canvas&gt;&lt;/div&gt;&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;div class="card"&gt;&lt;div class="chdr"&gt;&lt;div&gt;&lt;div class="ctitle"&gt;종목별 손익 (USD)&lt;/div&gt;&lt;div class="csub"&gt;오늘 체결&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;&lt;div class="h200"&gt;&lt;canvas id="us-pnl"&gt;&lt;/canvas&gt;&lt;/div&gt;&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;div class="col2"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;div class="card np"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;div class="chdr p"&gt;&lt;div&gt;&lt;div class="ctitle"&gt;오늘 매매 내역&lt;/div&gt;&lt;div class="csub"&gt;11건 체결&lt;/div&gt;&lt;/div&gt;&lt;button class="btn btn-g" style="font-size:11px;padding:5px 10px" onclick="goPage('trades',document.getElementById('ni-trades'))"&gt;전체 보기&lt;/button&gt;&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;table class="tbl"&gt;&lt;thead&gt;&lt;tr&gt;&lt;th&gt;종목&lt;/th&gt;&lt;th&gt;구분&lt;/th&gt;&lt;th&gt;진입가&lt;/th&gt;&lt;th&gt;청산가&lt;/th&gt;&lt;th&gt;손익&lt;/th&gt;&lt;/tr&gt;&lt;/thead&gt;&lt;tbody&gt;</p>
+<p class="p1"><span class="Apple-converted-space">          </span>&lt;tr&gt;&lt;td&gt;&lt;div class="tk"&gt;NVDA&lt;/div&gt;&lt;div style="font-size:10px;color:var(--muted)"&gt;22:35→23:18&lt;/div&gt;&lt;/td&gt;&lt;td&gt;&lt;span class="tb long"&gt;매수&lt;/span&gt;&lt;/td&gt;&lt;td class="mn"&gt;$874.20&lt;/td&gt;&lt;td class="mn"&gt;$891.50&lt;/td&gt;&lt;td class="pu"&gt;+$519&lt;/td&gt;&lt;/tr&gt;</p>
+<p class="p1"><span class="Apple-converted-space">          </span>&lt;tr&gt;&lt;td&gt;&lt;div class="tk"&gt;TSLA&lt;/div&gt;&lt;div style="font-size:10px;color:var(--muted)"&gt;23:40→00:12&lt;/div&gt;&lt;/td&gt;&lt;td&gt;&lt;span class="tb short"&gt;매도&lt;/span&gt;&lt;/td&gt;&lt;td class="mn"&gt;$172.80&lt;/td&gt;&lt;td class="mn"&gt;$169.40&lt;/td&gt;&lt;td class="pu"&gt;+$340&lt;/td&gt;&lt;/tr&gt;</p>
+<p class="p1"><span class="Apple-converted-space">          </span>&lt;tr&gt;&lt;td&gt;&lt;div class="tk"&gt;SPY&lt;/div&gt;&lt;div style="font-size:10px;color:var(--muted)"&gt;00:30→01:05&lt;/div&gt;&lt;/td&gt;&lt;td&gt;&lt;span class="tb long"&gt;매수&lt;/span&gt;&lt;/td&gt;&lt;td class="mn"&gt;$521.30&lt;/td&gt;&lt;td class="mn"&gt;$519.60&lt;/td&gt;&lt;td class="pd"&gt;-$170&lt;/td&gt;&lt;/tr&gt;</p>
+<p class="p1"><span class="Apple-converted-space">          </span>&lt;tr&gt;&lt;td&gt;&lt;div class="tk"&gt;ES1! (선물)&lt;/div&gt;&lt;div style="font-size:10px;color:var(--muted)"&gt;01:20→02:44&lt;/div&gt;&lt;/td&gt;&lt;td&gt;&lt;span class="tb fut"&gt;선물&lt;/span&gt;&lt;/td&gt;&lt;td class="mn"&gt;$5,248&lt;/td&gt;&lt;td class="mn"&gt;$5,271&lt;/td&gt;&lt;td class="pu"&gt;+$575&lt;/td&gt;&lt;/tr&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;/tbody&gt;&lt;/table&gt;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;div class="card"&gt;&lt;div class="chdr"&gt;&lt;div&gt;&lt;div class="ctitle"&gt;SPY 옵션 Greeks&lt;/div&gt;&lt;div class="csub"&gt;현재 보유 포지션&lt;/div&gt;&lt;/div&gt;&lt;span class="tb opt"&gt;CALL 525&lt;/span&gt;&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;div class="gg"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">          </span>&lt;div class="gr"&gt;&lt;div class="gn"&gt;DELTA (δ)&lt;/div&gt;&lt;div class="gv" style="color:var(--green)"&gt;+0.58&lt;/div&gt;&lt;div class="gbw"&gt;&lt;div class="gb" style="width:58%;background:var(--green)"&gt;&lt;/div&gt;&lt;/div&gt;&lt;div class="gd"&gt;기초자산 $1↑ → +$0.58&lt;/div&gt;&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">          </span>&lt;div class="gr"&gt;&lt;div class="gn"&gt;GAMMA (γ)&lt;/div&gt;&lt;div class="gv" style="color:var(--amber)"&gt;0.024&lt;/div&gt;&lt;div class="gbw"&gt;&lt;div class="gb" style="width:24%;background:var(--amber)"&gt;&lt;/div&gt;&lt;/div&gt;&lt;div class="gd"&gt;델타 변화 속도&lt;/div&gt;&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">          </span>&lt;div class="gr"&gt;&lt;div class="gn"&gt;THETA (θ)&lt;/div&gt;&lt;div class="gv" style="color:var(--purple)"&gt;-0.048&lt;/div&gt;&lt;div class="gbw"&gt;&lt;div class="gb" style="width:48%;background:var(--purple)"&gt;&lt;/div&gt;&lt;/div&gt;&lt;div class="gd"&gt;하루 시간가치 -$0.048&lt;/div&gt;&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">          </span>&lt;div class="gr"&gt;&lt;div class="gn"&gt;VEGA (ν)&lt;/div&gt;&lt;div class="gv" style="color:var(--blue)"&gt;0.182&lt;/div&gt;&lt;div class="gbw"&gt;&lt;div class="gb" style="width:36%;background:var(--blue)"&gt;&lt;/div&gt;&lt;/div&gt;&lt;div class="gd"&gt;IV 1%↑ → +$0.182&lt;/div&gt;&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">          </span>&lt;div class="gr" style="grid-column:span 2"&gt;&lt;div class="gn"&gt;IV · VIX&lt;/div&gt;&lt;div class="gv" style="color:var(--text)"&gt;22.7% · &lt;span style="color:var(--blue)"&gt;18.4&lt;/span&gt;&lt;/div&gt;&lt;div class="gbw"&gt;&lt;div class="gb" style="width:45%;background:var(--blue)"&gt;&lt;/div&gt;&lt;/div&gt;&lt;div class="gd"&gt;역사적 변동성 대비 보통 · 옵션 매수 중립&lt;/div&gt;&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;/div&gt;</p>
+<p class="p1">&lt;/div&gt;</p>
+<p class="p2"><br></p>
+<p class="p1">&lt;div id="page-trades" class="page"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;div class="phdr"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;div&gt;&lt;div class="ptitle"&gt;매매 내역 &lt;span class="pill pill-kr" id="tp"&gt;KR&lt;/span&gt;&lt;/div&gt;&lt;div class="psub" id="ts"&gt;한국 시장 전체 체결 내역&lt;/div&gt;&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;div class="acts"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;select style="background:var(--bg3);color:var(--muted);border:1px solid var(--border2);border-radius:8px;padding:6px 12px;font-size:12px;font-family:'Noto Sans KR',sans-serif;cursor:pointer"&gt;&lt;option&gt;2025년 3월&lt;/option&gt;&lt;option&gt;2025년 2월&lt;/option&gt;&lt;option&gt;2025년 1월&lt;/option&gt;&lt;/select&gt;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;button class="btn btn-g"&gt;📤 내보내기&lt;/button&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;div class="kgrid k4"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;div class="kcard"&gt;&lt;div class="klbl"&gt;이달 총 손익&lt;/div&gt;&lt;div class="kval up"&gt;+6,284,500&lt;/div&gt;&lt;div class="ksub"&gt;&lt;span class="badge up"&gt;+18.4%&lt;/span&gt;&lt;/div&gt;&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;div class="kcard cr"&gt;&lt;div class="klbl"&gt;이달 승률&lt;/div&gt;&lt;div class="kval n"&gt;65.2%&lt;/div&gt;&lt;div class="ksub" style="color:var(--muted)"&gt;87건 중 57승&lt;/div&gt;&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;div class="kcard ca"&gt;&lt;div class="klbl"&gt;손익비&lt;/div&gt;&lt;div class="kval n"&gt;1 : &lt;span style="color:var(--green)"&gt;2.1&lt;/span&gt;&lt;/div&gt;&lt;div class="ksub"&gt;&lt;span class="badge up"&gt;+0.3&lt;/span&gt;전월 대비&lt;/div&gt;&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;div class="kcard cp"&gt;&lt;div class="klbl"&gt;최대 연속 손절&lt;/div&gt;&lt;div class="kval dn"&gt;3&lt;/div&gt;&lt;div class="ksub" style="color:var(--muted)"&gt;3월 14일&lt;/div&gt;&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;div class="card np"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;div class="chdr p"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;div&gt;&lt;div class="ctitle"&gt;전체 체결 내역&lt;/div&gt;&lt;div class="csub"&gt;87건 · 최신순&lt;/div&gt;&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;div class="acts"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;select style="background:var(--bg3);color:var(--muted);border:1px solid var(--border2);border-radius:6px;padding:5px 10px;font-size:11px;font-family:'Noto Sans KR',sans-serif"&gt;&lt;option&gt;전체&lt;/option&gt;&lt;option&gt;주식&lt;/option&gt;&lt;option&gt;선물&lt;/option&gt;&lt;option&gt;옵션&lt;/option&gt;&lt;/select&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;select style="background:var(--bg3);color:var(--muted);border:1px solid var(--border2);border-radius:6px;padding:5px 10px;font-size:11px;font-family:'Noto Sans KR',sans-serif"&gt;&lt;option&gt;전체&lt;/option&gt;&lt;option&gt;익절&lt;/option&gt;&lt;option&gt;손절&lt;/option&gt;&lt;/select&gt;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;table class="tbl"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;thead&gt;&lt;tr&gt;&lt;th&gt;날짜/시간&lt;/th&gt;&lt;th&gt;종목&lt;/th&gt;&lt;th&gt;구분&lt;/th&gt;&lt;th&gt;수량&lt;/th&gt;&lt;th&gt;진입가&lt;/th&gt;&lt;th&gt;청산가&lt;/th&gt;&lt;th&gt;등락률&lt;/th&gt;&lt;th&gt;손익&lt;/th&gt;&lt;th&gt;메모&lt;/th&gt;&lt;/tr&gt;&lt;/thead&gt;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;tbody&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;tr&gt;&lt;td class="mn" style="color:var(--muted)"&gt;03.23 09:15&lt;/td&gt;&lt;td&gt;&lt;div class="tk"&gt;삼성전자&lt;/div&gt;&lt;/td&gt;&lt;td&gt;&lt;span class="tb long"&gt;매수&lt;/span&gt;&lt;/td&gt;&lt;td class="mn"&gt;400주&lt;/td&gt;&lt;td class="mn"&gt;72,400&lt;/td&gt;&lt;td class="mn"&gt;73,100&lt;/td&gt;&lt;td class="pu"&gt;+0.97%&lt;/td&gt;&lt;td class="pu"&gt;+280,000&lt;/td&gt;&lt;td style="font-size:11px;color:var(--muted)"&gt;갭상승 추종&lt;/td&gt;&lt;/tr&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;tr&gt;&lt;td class="mn" style="color:var(--muted)"&gt;03.23 11:40&lt;/td&gt;&lt;td&gt;&lt;div class="tk"&gt;SK하이닉스&lt;/div&gt;&lt;/td&gt;&lt;td&gt;&lt;span class="tb long"&gt;매수&lt;/span&gt;&lt;/td&gt;&lt;td class="mn"&gt;100주&lt;/td&gt;&lt;td class="mn"&gt;182,000&lt;/td&gt;&lt;td class="mn"&gt;180,500&lt;/td&gt;&lt;td class="pd"&gt;-0.82%&lt;/td&gt;&lt;td class="pd"&gt;-150,000&lt;/td&gt;&lt;td style="font-size:11px;color:var(--muted)"&gt;섹터 약세 손절&lt;/td&gt;&lt;/tr&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;tr&gt;&lt;td class="mn" style="color:var(--muted)"&gt;03.23 13:05&lt;/td&gt;&lt;td&gt;&lt;div class="tk"&gt;NAVER&lt;/div&gt;&lt;/td&gt;&lt;td&gt;&lt;span class="tb long"&gt;매수&lt;/span&gt;&lt;/td&gt;&lt;td class="mn"&gt;150주&lt;/td&gt;&lt;td class="mn"&gt;188,500&lt;/td&gt;&lt;td class="mn"&gt;190,000&lt;/td&gt;&lt;td class="pu"&gt;+0.80%&lt;/td&gt;&lt;td class="pu"&gt;+225,000&lt;/td&gt;&lt;td style="font-size:11px;color:var(--muted)"&gt;실적 기대감&lt;/td&gt;&lt;/tr&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;tr&gt;&lt;td class="mn" style="color:var(--muted)"&gt;03.23 14:10&lt;/td&gt;&lt;td&gt;&lt;div class="tk"&gt;카카오&lt;/div&gt;&lt;/td&gt;&lt;td&gt;&lt;span class="tb short"&gt;매도&lt;/span&gt;&lt;/td&gt;&lt;td class="mn"&gt;250주&lt;/td&gt;&lt;td class="mn"&gt;39,200&lt;/td&gt;&lt;td class="mn"&gt;38,700&lt;/td&gt;&lt;td class="pu"&gt;+1.28%&lt;/td&gt;&lt;td class="pu"&gt;+125,000&lt;/td&gt;&lt;td style="font-size:11px;color:var(--muted)"&gt;차익 실현&lt;/td&gt;&lt;/tr&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;tr&gt;&lt;td class="mn" style="color:var(--muted)"&gt;03.22 10:02&lt;/td&gt;&lt;td&gt;&lt;div class="tk"&gt;KOSPI200 F&lt;/div&gt;&lt;/td&gt;&lt;td&gt;&lt;span class="tb fut"&gt;선물&lt;/span&gt;&lt;/td&gt;&lt;td class="mn"&gt;2계약&lt;/td&gt;&lt;td class="mn"&gt;367.50&lt;/td&gt;&lt;td class="mn"&gt;368.90&lt;/td&gt;&lt;td class="pu"&gt;+0.38%&lt;/td&gt;&lt;td class="pu"&gt;+350,000&lt;/td&gt;&lt;td style="font-size:11px;color:var(--muted)"&gt;트렌드 추종&lt;/td&gt;&lt;/tr&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;tr&gt;&lt;td class="mn" style="color:var(--muted)"&gt;03.22 14:20&lt;/td&gt;&lt;td&gt;&lt;div class="tk"&gt;KOSPI200 P380&lt;/div&gt;&lt;/td&gt;&lt;td&gt;&lt;span class="tb opt"&gt;옵션&lt;/span&gt;&lt;/td&gt;&lt;td class="mn"&gt;5계약&lt;/td&gt;&lt;td class="mn"&gt;2.85&lt;/td&gt;&lt;td class="mn"&gt;2.48&lt;/td&gt;&lt;td class="pu"&gt;+13.0%&lt;/td&gt;&lt;td class="pu"&gt;+137,300&lt;/td&gt;&lt;td style="font-size:11px;color:var(--muted)"&gt;방향성 매수&lt;/td&gt;&lt;/tr&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;tr&gt;&lt;td class="mn" style="color:var(--muted)"&gt;03.21 09:30&lt;/td&gt;&lt;td&gt;&lt;div class="tk"&gt;현대차&lt;/div&gt;&lt;/td&gt;&lt;td&gt;&lt;span class="tb long"&gt;매수&lt;/span&gt;&lt;/td&gt;&lt;td class="mn"&gt;80주&lt;/td&gt;&lt;td class="mn"&gt;241,000&lt;/td&gt;&lt;td class="mn"&gt;245,500&lt;/td&gt;&lt;td class="pu"&gt;+1.87%&lt;/td&gt;&lt;td class="pu"&gt;+360,000&lt;/td&gt;&lt;td style="font-size:11px;color:var(--muted)"&gt;전기차 모멘텀&lt;/td&gt;&lt;/tr&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;tr&gt;&lt;td class="mn" style="color:var(--muted)"&gt;03.21 14:00&lt;/td&gt;&lt;td&gt;&lt;div class="tk"&gt;LG에너지솔루션&lt;/div&gt;&lt;/td&gt;&lt;td&gt;&lt;span class="tb long"&gt;매수&lt;/span&gt;&lt;/td&gt;&lt;td class="mn"&gt;20주&lt;/td&gt;&lt;td class="mn"&gt;412,000&lt;/td&gt;&lt;td class="mn"&gt;408,000&lt;/td&gt;&lt;td class="pd"&gt;-0.97%&lt;/td&gt;&lt;td class="pd"&gt;-80,000&lt;/td&gt;&lt;td style="font-size:11px;color:var(--muted)"&gt;지지선 이탈&lt;/td&gt;&lt;/tr&gt;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;/tbody&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;/table&gt;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;/div&gt;</p>
+<p class="p1">&lt;/div&gt;</p>
+<p class="p2"><br></p>
+<p class="p1">&lt;div id="page-aijournal" class="page"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;div class="phdr"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;div&gt;&lt;div class="ptitle"&gt;AI 일지 &lt;span class="pill pill-ai"&gt;Claude&lt;/span&gt;&lt;/div&gt;&lt;div class="psub"&gt;매매 기록 자동 분석 · 패턴 감지&lt;/div&gt;&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;div class="acts"&gt;&lt;button class="btn btn-g"&gt;📅 날짜 선택&lt;/button&gt;&lt;button class="btn btn-green" onclick="genJournal('kr',event)"&gt;✦ 오늘 일지 작성&lt;/button&gt;&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;div class="col2e" style="margin-bottom:14px"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;div class="card"&gt;&lt;div style="margin-bottom:12px"&gt;&lt;div class="ctitle"&gt;30일 누적 손익&lt;/div&gt;&lt;div style="font-family:var(--mono);font-size:12px;color:var(--green);margin-top:2px"&gt;+6,284,500원&lt;/div&gt;&lt;/div&gt;&lt;div class="h240"&gt;&lt;canvas id="j-pnl"&gt;&lt;/canvas&gt;&lt;/div&gt;&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;div style="display:flex;flex-direction:column;gap:14px"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;div class="kcard" style="flex:1"&gt;&lt;div class="klbl"&gt;이달 일지 작성 수&lt;/div&gt;&lt;div class="kval n"&gt;18&lt;span style="font-size:14px;font-weight:400"&gt; 건&lt;/span&gt;&lt;/div&gt;&lt;div class="ksub" style="color:var(--muted)"&gt;영업일 19일 중&lt;/div&gt;&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;div class="kcard cp" style="flex:1"&gt;&lt;div class="klbl"&gt;평균 인사이트 점수&lt;/div&gt;&lt;div class="kval n"&gt;84&lt;span style="font-size:14px;font-weight:400"&gt;/100&lt;/span&gt;&lt;/div&gt;&lt;div class="ksub"&gt;&lt;span class="badge up"&gt;+6점&lt;/span&gt;전월 대비&lt;/div&gt;&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;div class="kcard ca" style="flex:1"&gt;&lt;div class="klbl"&gt;반복 실수 패턴&lt;/div&gt;&lt;div class="kval dn"&gt;3&lt;span style="font-size:14px;font-weight:400;color:var(--muted)"&gt; 가지&lt;/span&gt;&lt;/div&gt;&lt;div class="ksub" style="color:var(--muted);font-size:10px"&gt;조기 익절 · 역추세 진입 · 뉴스 과잉 반응&lt;/div&gt;&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;div class="ai-card"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;div class="ai-top"&gt;&lt;div&gt;&lt;div class="ctitle"&gt;🇰🇷 2025.03.23 (월) · 한국 시장 일지&lt;/div&gt;&lt;div class="csub"&gt;장 마감 후 자동 생성&lt;/div&gt;&lt;/div&gt;&lt;div class="ai-badge"&gt;✦ Claude AI&lt;/div&gt;&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;div class="ai-body"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;div class="ai-date"&gt;생성 시각 15:32 KST&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;div class="ai-text" id="kr-ai-text"&gt;오늘은 총 &lt;strong&gt;13건&lt;/strong&gt;을 체결해 &lt;strong&gt;+842,300원&lt;/strong&gt;을 달성했습니다. 삼성전자 갭상승 추종이 핵심 수익원이었고, SK하이닉스는 섹터 약세로 손절. 손익비 1:1.8 내 관리. KOSPI200 풋옵션은 낮은 IV(18.3%) 환경에서도 방향성으로 수익.&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;div class="ai-ins" id="kr-ai-ins"&gt;&lt;div class="ai-ins-t"&gt;✦ AI 인사이트&lt;/div&gt;① 삼성전자 1차 청산 후 재진입 기회 놓침 — 부분 보유 전략 검토 권장.&lt;br&gt;② SK하이닉스 진입 시 섹터 ETF 흐름 미확인 → 진입 전 필수 체크.&lt;br&gt;③ 이달 3회 연속 조기 익절 패턴 감지 — 익절 목표가 20%p 상향 시 기대수익 +34% 향상 추정.&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;div class="ai-card"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;div class="ai-top"&gt;&lt;div&gt;&lt;div class="ctitle"&gt;🇺🇸 2025.03.22 (금) · 미국 시장 일지&lt;/div&gt;&lt;div class="csub"&gt;야간장 마감 후 자동 생성&lt;/div&gt;&lt;/div&gt;&lt;div class="ai-badge"&gt;✦ Claude AI&lt;/div&gt;&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;div class="ai-body"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;div class="ai-date"&gt;생성 시각 05:14 KST&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;div class="ai-text" id="us-ai-text"&gt;미국 시장에서 &lt;strong&gt;11건&lt;/strong&gt; 체결, &lt;strong&gt;+$1,248&lt;/strong&gt; 달성. NVDA 모멘텀 롱과 ES1! 선물 아시아 반등 추종이 핵심. SPY 단기 약세로 손절 처리. 승률 72.7% 이달 최고.&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;div class="ai-ins" id="us-ai-ins"&gt;&lt;div class="ai-ins-t"&gt;✦ AI 인사이트&lt;/div&gt;SPY 콜옵션 만기 D-3, Theta -0.048 부담 가속화. 주말 전 청산 또는 롤오버 결정 필요. VIX 18.4 수준에서 변동성 확대 시 Vega 0.182 수혜 가능.&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;/div&gt;</p>
+<p class="p1">&lt;/div&gt;</p>
+<p class="p2"><br></p>
+<p class="p1">&lt;div id="page-analysis" class="page"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;div class="phdr"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;div&gt;&lt;div class="ptitle"&gt;종목 분석 &lt;span class="pill pill-ana"&gt;분석&lt;/span&gt;&lt;/div&gt;&lt;div class="psub"&gt;자주 매매한 종목의 통계 · 패턴 분석&lt;/div&gt;&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;div class="acts"&gt;&lt;button class="btn btn-g"&gt;기간 설정&lt;/button&gt;&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;div class="col3g"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;div class="card"&gt;&lt;div class="chdr"&gt;&lt;div&gt;&lt;div class="ctitle"&gt;삼성전자 (005930)&lt;/div&gt;&lt;div class="csub" style="color:var(--green)"&gt;승률 76% · 이달 12회&lt;/div&gt;&lt;/div&gt;&lt;span class="tb long"&gt;주식&lt;/span&gt;&lt;/div&gt;&lt;div class="h200"&gt;&lt;canvas id="s-sec"&gt;&lt;/canvas&gt;&lt;/div&gt;&lt;div style="margin-top:12px;display:flex;justify-content:space-between;font-size:11px"&gt;&lt;div&gt;&lt;div style="color:var(--muted)"&gt;평균 수익&lt;/div&gt;&lt;div class="mn" style="color:var(--green)"&gt;+168,000원&lt;/div&gt;&lt;/div&gt;&lt;div&gt;&lt;div style="color:var(--muted)"&gt;평균 손실&lt;/div&gt;&lt;div class="mn" style="color:var(--red)"&gt;-82,000원&lt;/div&gt;&lt;/div&gt;&lt;div&gt;&lt;div style="color:var(--muted)"&gt;손익비&lt;/div&gt;&lt;div class="mn"&gt;1:2.05&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;div class="card"&gt;&lt;div class="chdr"&gt;&lt;div&gt;&lt;div class="ctitle"&gt;NVDA&lt;/div&gt;&lt;div class="csub" style="color:var(--green)"&gt;승률 80% · 이달 8회&lt;/div&gt;&lt;/div&gt;&lt;span class="tb long"&gt;주식&lt;/span&gt;&lt;/div&gt;&lt;div class="h200"&gt;&lt;canvas id="s-nvda"&gt;&lt;/canvas&gt;&lt;/div&gt;&lt;div style="margin-top:12px;display:flex;justify-content:space-between;font-size:11px"&gt;&lt;div&gt;&lt;div style="color:var(--muted)"&gt;평균 수익&lt;/div&gt;&lt;div class="mn" style="color:var(--green)"&gt;+$412&lt;/div&gt;&lt;/div&gt;&lt;div&gt;&lt;div style="color:var(--muted)"&gt;평균 손실&lt;/div&gt;&lt;div class="mn" style="color:var(--red)"&gt;-$178&lt;/div&gt;&lt;/div&gt;&lt;div&gt;&lt;div style="color:var(--muted)"&gt;손익비&lt;/div&gt;&lt;div class="mn"&gt;1:2.31&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;div class="card"&gt;&lt;div class="chdr"&gt;&lt;div&gt;&lt;div class="ctitle"&gt;KOSPI200 F&lt;/div&gt;&lt;div class="csub" style="color:var(--blue)"&gt;승률 60% · 이달 15회&lt;/div&gt;&lt;/div&gt;&lt;span class="tb fut"&gt;선물&lt;/span&gt;&lt;/div&gt;&lt;div class="h200"&gt;&lt;canvas id="s-fut"&gt;&lt;/canvas&gt;&lt;/div&gt;&lt;div style="margin-top:12px;display:flex;justify-content:space-between;font-size:11px"&gt;&lt;div&gt;&lt;div style="color:var(--muted)"&gt;평균 수익&lt;/div&gt;&lt;div class="mn" style="color:var(--green)"&gt;+320,000원&lt;/div&gt;&lt;/div&gt;&lt;div&gt;&lt;div style="color:var(--muted)"&gt;평균 손실&lt;/div&gt;&lt;div class="mn" style="color:var(--red)"&gt;-185,000원&lt;/div&gt;&lt;/div&gt;&lt;div&gt;&lt;div style="color:var(--muted)"&gt;손익비&lt;/div&gt;&lt;div class="mn"&gt;1:1.73&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;div class="col2e"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;div class="card"&gt;&lt;div class="chdr"&gt;&lt;div&gt;&lt;div class="ctitle"&gt;시간대별 손익 히트맵&lt;/div&gt;&lt;div class="csub"&gt;이달 기준 · 색이 진할수록 수익 집중&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;&lt;div id="hmap" style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:4px"&gt;&lt;/div&gt;&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;div class="card"&gt;&lt;div class="chdr"&gt;&lt;div&gt;&lt;div class="ctitle"&gt;요일별 승률&lt;/div&gt;&lt;div class="csub"&gt;이달 기준&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;&lt;div class="h200"&gt;&lt;canvas id="s-wd"&gt;&lt;/canvas&gt;&lt;/div&gt;&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;/div&gt;</p>
+<p class="p1">&lt;/div&gt;</p>
+<p class="p2"><br></p>
+<p class="p1">&lt;div id="page-risk" class="page"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;div class="phdr"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;div&gt;&lt;div class="ptitle"&gt;리스크 관리 &lt;span class="pill pill-risk"&gt;위험도 중&lt;/span&gt;&lt;/div&gt;&lt;div class="psub"&gt;포트폴리오 리스크 현황 · 실시간 모니터링&lt;/div&gt;&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;div class="acts"&gt;&lt;button class="btn btn-g"&gt;알림 설정&lt;/button&gt;&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;div class="kgrid k4"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;div class="kcard cr"&gt;&lt;div class="klbl"&gt;일일 최대 손실 한도&lt;/div&gt;&lt;div class="kval n"&gt;500,000&lt;span style="font-size:12px;font-weight:400"&gt;원&lt;/span&gt;&lt;/div&gt;&lt;div class="ksub"&gt;&lt;span class="badge dn"&gt;사용 30%&lt;/span&gt;150,000원 사용&lt;/div&gt;&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;div class="kcard ca"&gt;&lt;div class="klbl"&gt;오픈 포지션 평가손익&lt;/div&gt;&lt;div class="kval up"&gt;+184,200&lt;/div&gt;&lt;div class="ksub" style="color:var(--muted)"&gt;2개 포지션 보유&lt;/div&gt;&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;div class="kcard cp"&gt;&lt;div class="klbl"&gt;포트폴리오 베타&lt;/div&gt;&lt;div class="kval n"&gt;1.24&lt;/div&gt;&lt;div class="ksub"&gt;&lt;span class="badge dn"&gt;고위험&lt;/span&gt;시장 대비 1.24배&lt;/div&gt;&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;div class="kcard cb"&gt;&lt;div class="klbl"&gt;총 노출 금액&lt;/div&gt;&lt;div class="kval n"&gt;12.4M&lt;/div&gt;&lt;div class="ksub" style="color:var(--muted)"&gt;자산 대비 62%&lt;/div&gt;&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;div class="col2"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;div style="display:flex;flex-direction:column;gap:14px"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;div class="card"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;div class="chdr"&gt;&lt;div&gt;&lt;div class="ctitle"&gt;일일 손실 한도 사용률&lt;/div&gt;&lt;div class="csub"&gt;오늘 기준&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;div class="rmeter"&gt;&lt;div class="rlbl"&gt;&lt;span&gt;한국 시장&lt;/span&gt;&lt;span style="font-family:var(--mono);font-size:11px;color:var(--amber)"&gt;30%&lt;/span&gt;&lt;/div&gt;&lt;div class="rtrack"&gt;&lt;div class="rfill" style="width:30%;background:var(--amber)"&gt;&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;div class="rmeter"&gt;&lt;div class="rlbl"&gt;&lt;span&gt;미국 시장&lt;/span&gt;&lt;span style="font-family:var(--mono);font-size:11px;color:var(--green)"&gt;14%&lt;/span&gt;&lt;/div&gt;&lt;div class="rtrack"&gt;&lt;div class="rfill" style="width:14%;background:var(--green)"&gt;&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;div class="rmeter"&gt;&lt;div class="rlbl"&gt;&lt;span&gt;전체 합산&lt;/span&gt;&lt;span style="font-family:var(--mono);font-size:11px;color:var(--amber)"&gt;22%&lt;/span&gt;&lt;/div&gt;&lt;div class="rtrack"&gt;&lt;div class="rfill" style="width:22%;background:var(--amber)"&gt;&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;div class="card np"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;div class="chdr p"&gt;&lt;div&gt;&lt;div class="ctitle"&gt;현재 보유 포지션&lt;/div&gt;&lt;div class="csub"&gt;오픈 2건&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;table class="tbl"&gt;&lt;thead&gt;&lt;tr&gt;&lt;th&gt;종목&lt;/th&gt;&lt;th&gt;구분&lt;/th&gt;&lt;th&gt;진입가&lt;/th&gt;&lt;th&gt;현재가&lt;/th&gt;&lt;th&gt;평가손익&lt;/th&gt;&lt;th&gt;손절선&lt;/th&gt;&lt;/tr&gt;&lt;/thead&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;tbody&gt;</p>
+<p class="p1"><span class="Apple-converted-space">          </span>&lt;tr&gt;&lt;td&gt;&lt;div class="tk"&gt;KOSPI200 PUT380&lt;/div&gt;&lt;/td&gt;&lt;td&gt;&lt;span class="tb opt"&gt;옵션&lt;/span&gt;&lt;/td&gt;&lt;td class="mn"&gt;2.85&lt;/td&gt;&lt;td class="mn"&gt;3.12&lt;/td&gt;&lt;td class="pu"&gt;+135,000&lt;/td&gt;&lt;td class="mn" style="color:var(--red)"&gt;2.20&lt;/td&gt;&lt;/tr&gt;</p>
+<p class="p1"><span class="Apple-converted-space">          </span>&lt;tr&gt;&lt;td&gt;&lt;div class="tk"&gt;SPY CALL525&lt;/div&gt;&lt;/td&gt;&lt;td&gt;&lt;span class="tb opt"&gt;옵션&lt;/span&gt;&lt;/td&gt;&lt;td class="mn"&gt;$4.20&lt;/td&gt;&lt;td class="mn"&gt;$4.68&lt;/td&gt;&lt;td class="pu"&gt;+$240&lt;/td&gt;&lt;td class="mn" style="color:var(--red)"&gt;$3.50&lt;/td&gt;&lt;/tr&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;/tbody&gt;&lt;/table&gt;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;div style="display:flex;flex-direction:column;gap:14px"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;div class="card"&gt;&lt;div class="chdr"&gt;&lt;div&gt;&lt;div class="ctitle"&gt;월별 MDD (최대 낙폭)&lt;/div&gt;&lt;div class="csub"&gt;최근 6개월&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;&lt;div class="h200"&gt;&lt;canvas id="r-mdd"&gt;&lt;/canvas&gt;&lt;/div&gt;&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;div class="card"&gt;&lt;div class="chdr"&gt;&lt;div&gt;&lt;div class="ctitle"&gt;리스크 경고&lt;/div&gt;&lt;div class="csub"&gt;AI 감지&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;div style="display:flex;flex-direction:column;gap:8px"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">          </span>&lt;div style="display:flex;align-items:flex-start;gap:10px;padding:10px 12px;background:rgba(251,191,36,0.06);border:1px solid rgba(251,191,36,0.15);border-radius:8px"&gt;&lt;span style="color:var(--amber);font-size:13px;margin-top:1px"&gt;⚠&lt;/span&gt;&lt;div&gt;&lt;div style="font-size:12px;font-weight:500;color:var(--amber)"&gt;집중 리스크&lt;/div&gt;&lt;div style="font-size:11px;color:var(--muted);margin-top:2px"&gt;반도체 섹터 집중도 42% — 분산 권장&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">          </span>&lt;div style="display:flex;align-items:flex-start;gap:10px;padding:10px 12px;background:rgba(248,113,113,0.06);border:1px solid rgba(248,113,113,0.15);border-radius:8px"&gt;&lt;span style="color:var(--red);font-size:13px;margin-top:1px"&gt;⛔&lt;/span&gt;&lt;div&gt;&lt;div style="font-size:12px;font-weight:500;color:var(--red)"&gt;옵션 만기 임박&lt;/div&gt;&lt;div style="font-size:11px;color:var(--muted);margin-top:2px"&gt;SPY CALL525 만기 D-3 · Theta 손실 가속화&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">          </span>&lt;div style="display:flex;align-items:flex-start;gap:10px;padding:10px 12px;background:rgba(74,222,128,0.06);border:1px solid rgba(74,222,128,0.15);border-radius:8px"&gt;&lt;span style="color:var(--green);font-size:13px;margin-top:1px"&gt;✓&lt;/span&gt;&lt;div&gt;&lt;div style="font-size:12px;font-weight:500;color:var(--green)"&gt;손절 준수율 양호&lt;/div&gt;&lt;div style="font-size:11px;color:var(--muted);margin-top:2px"&gt;이달 설정 손절선 100% 준수 유지 중&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;/div&gt;</p>
+<p class="p1">&lt;/div&gt;</p>
+<p class="p2"><br></p>
+<p class="p1">&lt;/main&gt;</p>
+<p class="p1">&lt;script&gt;</p>
+<p class="p1">let curSession = 'kr';</p>
+<p class="p2"><br></p>
+<p class="p1">function goPage(id, el) {</p>
+<p class="p1"><span class="Apple-converted-space">  </span>document.querySelectorAll('.page').forEach(p =&gt; p.classList.remove('on'));</p>
+<p class="p1"><span class="Apple-converted-space">  </span>document.getElementById('page-' + id).classList.add('on');</p>
+<p class="p1"><span class="Apple-converted-space">  </span>document.querySelectorAll('.nav-item').forEach(n =&gt; n.classList.remove('on'));</p>
+<p class="p1"><span class="Apple-converted-space">  </span>if (el) el.classList.add('on');</p>
+<p class="p1"><span class="Apple-converted-space">  </span>if (id === 'trades') {</p>
+<p class="p1"><span class="Apple-converted-space">    </span>const p = document.getElementById('tp'), s = document.getElementById('ts');</p>
+<p class="p1"><span class="Apple-converted-space">    </span>if (curSession === 'kr') { p.textContent='KR'; p.className='pill pill-kr'; s.textContent='한국 시장 전체 체결 내역'; }</p>
+<p class="p1"><span class="Apple-converted-space">    </span>else { p.textContent='US'; p.className='pill pill-us'; s.textContent='미국 시장 전체 체결 내역'; }</p>
+<p class="p1"><span class="Apple-converted-space">  </span>}</p>
+<p class="p1">}</p>
+<p class="p2"><br></p>
+<p class="p1">function setSession(id) {</p>
+<p class="p1"><span class="Apple-converted-space">  </span>curSession = id;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>document.getElementById('sb-kr').className = 'sess-btn' + (id==='kr'?' on-kr':'');</p>
+<p class="p1"><span class="Apple-converted-space">  </span>document.getElementById('sb-us').className = 'sess-btn' + (id==='us'?' on-us':'');</p>
+<p class="p1"><span class="Apple-converted-space">  </span>document.getElementById('dash-kr').className = 'sv' + (id==='kr'?' on':'');</p>
+<p class="p1"><span class="Apple-converted-space">  </span>document.getElementById('dash-us').className = 'sv' + (id==='us'?' on':'');</p>
+<p class="p1">}</p>
+<p class="p2"><br></p>
+<p class="p1">function stab(el, gid) {</p>
+<p class="p1"><span class="Apple-converted-space">  </span>document.getElementById(gid).querySelectorAll('.tab').forEach(t =&gt; t.classList.remove('on'));</p>
+<p class="p1"><span class="Apple-converted-space">  </span>el.classList.add('on');</p>
+<p class="p1">}</p>
+<p class="p2"><br></p>
+<p class="p1">// chart helpers</p>
+<p class="p1">const gc='rgba(255,255,255,0.04)', tc={color:'#6b7280',font:{family:'JetBrains Mono',size:10}}, bc={color:'rgba(255,255,255,0.07)'};</p>
+<p class="p1">const tt={backgroundColor:'#181c24',borderColor:'rgba(255,255,255,0.1)',borderWidth:1,titleColor:'#e8eaf0',bodyColor:'#9ca3af',padding:11,titleFont:{family:'Noto Sans KR',size:12},bodyFont:{family:'JetBrains Mono',size:11}};</p>
+<p class="p2"><br></p>
+<p class="p1">function makeEE(id, trades) {</p>
+<p class="p1"><span class="Apple-converted-space">  </span>const c = document.getElementById(id); if (!c) return;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>const fl = trades.map(t =&gt; { const x=+(t.exit/t.entry*100).toFixed(3); return [Math.min(100,x),Math.max(100,x)]; });</p>
+<p class="p1"><span class="Apple-converted-space">  </span>new Chart(c, { type:'bar', data:{ labels:trades.map(t=&gt;t.l), datasets:[</p>
+<p class="p1"><span class="Apple-converted-space">    </span>{ data:fl, backgroundColor:trades.map(t=&gt;t.w?'rgba(74,222,128,0.8)':'rgba(248,113,113,0.8)'), borderColor:trades.map(t=&gt;t.w?'#4ade80':'#f87171'), borderWidth:1.5, borderRadius:4, borderSkipped:false, barPercentage:0.45 },</p>
+<p class="p1"><span class="Apple-converted-space">    </span>{ data:trades.map(()=&gt;100), type:'line', borderColor:'rgba(96,165,250,0.7)', borderWidth:1.5, borderDash:[4,4], pointRadius:4, pointBackgroundColor:'#60a5fa', pointBorderColor:'#0a0c10', pointBorderWidth:2, fill:false, tension:0, order:0 }</p>
+<p class="p1"><span class="Apple-converted-space">  </span>]}, options:{ responsive:true, maintainAspectRatio:false, interaction:{intersect:false,mode:'index'},</p>
+<p class="p1"><span class="Apple-converted-space">    </span>plugins:{ legend:{display:false}, tooltip:{...tt, filter:i=&gt;i.datasetIndex===0, callbacks:{ title:items=&gt;trades[items[0].dataIndex].l, label:item=&gt;{ const t=trades[item.dataIndex]; const d=((t.exit/t.entry-1)*100).toFixed(2); return [`<span class="Apple-converted-space">  </span>진입가 : ${t.entry.toLocaleString()}`,`<span class="Apple-converted-space">  </span>청산가 : ${t.exit.toLocaleString()}`,`<span class="Apple-converted-space">  </span>등락률 : ${d&gt;=0?'+':''}${d}%`,`<span class="Apple-converted-space">  </span>손<span class="Apple-converted-space">  </span>익 : ${t.pnl&gt;=0?'+':''}${t.ps}`]; }, labelColor:item=&gt;{ const c=trades[item.dataIndex].w?'#4ade80':'#f87171'; return {borderColor:c,backgroundColor:c}; } } } },</p>
+<p class="p1"><span class="Apple-converted-space">    </span>scales:{ x:{grid:{color:gc},ticks:tc,border:bc}, y:{grid:{color:gc},ticks:{...tc,callback:v=&gt;v.toFixed(1)+'%'},border:bc,title:{display:true,text:'진입가 대비(%)',color:'#6b7280',font:{family:'Noto Sans KR',size:10}}} }</p>
+<p class="p1"><span class="Apple-converted-space">  </span>}, plugins:[{ id:'lbl', afterDatasetsDraw(chart){ const {ctx}=chart; chart.getDatasetMeta(0).data.forEach((bar,i)=&gt;{ const t=trades[i]; ctx.save(); ctx.fillStyle=t.w?'#4ade80':'#f87171'; ctx.font='500 10px JetBrains Mono'; ctx.textAlign='center'; ctx.fillText((t.pnl&gt;=0?'+':'')+t.pl,bar.x,t.w?bar.y-7:bar.y+bar.height+14); ctx.restore(); }); } }] });</p>
+<p class="p1">}</p>
+<p class="p2"><br></p>
+<p class="p1">function makePnl(id, trades, unit) {</p>
+<p class="p1"><span class="Apple-converted-space">  </span>const c = document.getElementById(id); if (!c) return;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>new Chart(c, { type:'bar', data:{ labels:trades.map(t=&gt;t.l), datasets:[{ data:trades.map(t=&gt;t.pnl), backgroundColor:trades.map(t=&gt;t.w?'rgba(74,222,128,0.8)':'rgba(248,113,113,0.8)'), borderColor:trades.map(t=&gt;t.w?'#4ade80':'#f87171'), borderWidth:1.5, borderRadius:4, barPercentage:0.55 }] },</p>
+<p class="p1"><span class="Apple-converted-space">    </span>options:{ responsive:true, maintainAspectRatio:false, plugins:{ legend:{display:false}, tooltip:{...tt,callbacks:{label:i=&gt;`<span class="Apple-converted-space">  </span>${i.raw&gt;=0?'+':''}${i.raw.toLocaleString()} ${unit}`}} }, scales:{ x:{grid:{color:gc},ticks:tc,border:bc}, y:{grid:{color:gc},ticks:{...tc,callback:v=&gt;(v&gt;=0?'+':'')+v.toLocaleString()},border:bc} } }</p>
+<p class="p1"><span class="Apple-converted-space">  </span>});</p>
+<p class="p1">}</p>
+<p class="p2"><br></p>
+<p class="p1">function makeBar(id, labels, data, colors) {</p>
+<p class="p1"><span class="Apple-converted-space">  </span>const c = document.getElementById(id); if (!c) return;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>new Chart(c, { type:'bar', data:{ labels, datasets:[{ data, backgroundColor:colors||data.map(v=&gt;v&gt;=0?'rgba(74,222,128,0.75)':'rgba(248,113,113,0.75)'), borderColor:data.map(v=&gt;v&gt;=0?'#4ade80':'#f87171'), borderWidth:1.5, borderRadius:3, barPercentage:0.55 }] },</p>
+<p class="p1"><span class="Apple-converted-space">    </span>options:{ responsive:true, maintainAspectRatio:false, plugins:{ legend:{display:false}, tooltip:{...tt,callbacks:{label:i=&gt;`<span class="Apple-converted-space">  </span>${i.raw&gt;=0?'+':''}${i.raw.toLocaleString()}`}} }, scales:{ x:{grid:{color:gc},ticks:{...tc,maxTicksLimit:7},border:bc}, y:{grid:{color:gc},ticks:{...tc,callback:v=&gt;(v&gt;=0?'+':'')+v.toLocaleString()},border:bc} } }</p>
+<p class="p1"><span class="Apple-converted-space">  </span>});</p>
+<p class="p1">}</p>
+<p class="p2"><br></p>
+<p class="p1">// data</p>
+<p class="p1">const krT = [</p>
+<p class="p1"><span class="Apple-converted-space">  </span>{l:'삼성전자',entry:72400, exit:73100, pnl:280000,<span class="Apple-converted-space">  </span>ps:'280,000원', pl:'28만',<span class="Apple-converted-space">  </span>w:true},</p>
+<p class="p1"><span class="Apple-converted-space">  </span>{l:'SK하닉',<span class="Apple-converted-space">  </span>entry:182000,exit:180500,pnl:-150000, ps:'-150,000원',pl:'-15만', w:false},</p>
+<p class="p1"><span class="Apple-converted-space">  </span>{l:'NAVER',<span class="Apple-converted-space">  </span>entry:188500,exit:190000,pnl:225000,<span class="Apple-converted-space">  </span>ps:'225,000원', pl:'22.5만', w:true},</p>
+<p class="p1"><span class="Apple-converted-space">  </span>{l:'카카오', entry:39200, exit:38700, pnl:125000,<span class="Apple-converted-space">  </span>ps:'125,000원', pl:'12.5만', w:true},</p>
+<p class="p1">];</p>
+<p class="p1">const usT = [</p>
+<p class="p1"><span class="Apple-converted-space">  </span>{l:'NVDA', entry:874.20,exit:891.50,pnl:519,<span class="Apple-converted-space">  </span>ps:'$519',<span class="Apple-converted-space">  </span>pl:'$519',<span class="Apple-converted-space">  </span>w:true},</p>
+<p class="p1"><span class="Apple-converted-space">  </span>{l:'TSLA', entry:172.80,exit:169.40,pnl:340,<span class="Apple-converted-space">  </span>ps:'$340',<span class="Apple-converted-space">  </span>pl:'$340',<span class="Apple-converted-space">  </span>w:true},</p>
+<p class="p1"><span class="Apple-converted-space">  </span>{l:'SPY',<span class="Apple-converted-space">  </span>entry:521.30,exit:519.60,pnl:-170, ps:'-$170', pl:'-$170', w:false},</p>
+<p class="p1"><span class="Apple-converted-space">  </span>{l:'ES1!', entry:5248,<span class="Apple-converted-space">  </span>exit:5271,<span class="Apple-converted-space">  </span>pnl:575,<span class="Apple-converted-space">  </span>ps:'$575',<span class="Apple-converted-space">  </span>pl:'$575',<span class="Apple-converted-space">  </span>w:true},</p>
+<p class="p1">];</p>
+<p class="p2"><br></p>
+<p class="p1">makeEE('kr-ee',krT); makePnl('kr-pnl',krT,'원');</p>
+<p class="p1">makeEE('us-ee',usT); makePnl('us-pnl',usT,'USD');</p>
+<p class="p2"><br></p>
+<p class="p1">// 30일 손익</p>
+<p class="p1">(()=&gt;{</p>
+<p class="p1"><span class="Apple-converted-space">  </span>const c=document.getElementById('j-pnl'); if(!c) return;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>const labels=Array.from({length:30},(_,i)=&gt;{const d=new Date(2025,1,22+i);return `${d.getMonth()+1}/${d.getDate()}`;});</p>
+<p class="p1"><span class="Apple-converted-space">  </span>const data=[0,320000,150000,890000,720000,1100000,980000,1400000,1250000,1600000,1420000,1800000,2100000,1950000,2350000,2200000,2600000,2400000,2900000,3200000,3050000,3500000,3300000,3700000,4100000,3900000,4400000,4800000,5600000,6284500];</p>
+<p class="p1"><span class="Apple-converted-space">  </span>const g=c.getContext('2d').createLinearGradient(0,0,0,240); g.addColorStop(0,'rgba(74,222,128,0.2)'); g.addColorStop(1,'rgba(74,222,128,0)');</p>
+<p class="p1"><span class="Apple-converted-space">  </span>new Chart(c,{type:'line',data:{labels,datasets:[{data,borderColor:'#4ade80',borderWidth:2,backgroundColor:g,fill:true,tension:0.4,pointRadius:0,pointHoverRadius:4,pointHoverBackgroundColor:'#4ade80',pointHoverBorderColor:'#0a0c10',pointHoverBorderWidth:2}]},</p>
+<p class="p1"><span class="Apple-converted-space">    </span>options:{responsive:true,maintainAspectRatio:false,interaction:{intersect:false,mode:'index'},plugins:{legend:{display:false},tooltip:{...tt,bodyColor:'#4ade80',callbacks:{label:i=&gt;`<span class="Apple-converted-space">  </span>+${i.raw.toLocaleString()}원`}}},</p>
+<p class="p1"><span class="Apple-converted-space">      </span>scales:{x:{grid:{color:gc},ticks:{...tc,maxTicksLimit:8},border:bc},y:{grid:{color:gc},ticks:{...tc,callback:v=&gt;v&gt;=1000000?(v/1000000).toFixed(1)+'M':v&gt;=1000?(v/1000).toFixed(0)+'K':v},border:bc}}}</p>
+<p class="p1"><span class="Apple-converted-space">  </span>});</p>
+<p class="p1">})();</p>
+<p class="p2"><br></p>
+<p class="p1">// 종목 차트</p>
+<p class="p1">makeBar('s-sec',['1','2','3','4','5','6','7','8','9','10','11','12'],[280000,-80000,195000,310000,-60000,240000,175000,-90000,220000,185000,260000,-70000]);</p>
+<p class="p1">makeBar('s-nvda',['1','2','3','4','5','6','7','8'],[390,520,-180,610,440,-220,380,510]);</p>
+<p class="p1">makeBar('s-fut',['1','2','3','4','5','6','7','8','9','10'],[350000,-185000,420000,-210000,380000,290000,-160000,445000,-190000,310000]);</p>
+<p class="p2"><br></p>
+<p class="p1">// 요일별 승률</p>
+<p class="p1">(()=&gt;{</p>
+<p class="p1"><span class="Apple-converted-space">  </span>const c=document.getElementById('s-wd'); if(!c) return;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>new Chart(c,{type:'bar',data:{labels:['월','화','수','목','금'],datasets:[{data:[72,58,68,74,65],backgroundColor:['rgba(74,222,128,0.7)','rgba(96,165,250,0.7)','rgba(74,222,128,0.7)','rgba(74,222,128,0.7)','rgba(251,191,36,0.7)'],borderColor:['#4ade80','#60a5fa','#4ade80','#4ade80','#fbbf24'],borderWidth:1.5,borderRadius:4,barPercentage:0.55}]},</p>
+<p class="p1"><span class="Apple-converted-space">    </span>options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{...tt,callbacks:{label:i=&gt;`<span class="Apple-converted-space">  </span>승률 ${i.raw}%`}}},scales:{x:{grid:{color:gc},ticks:tc,border:bc},y:{grid:{color:gc},ticks:{...tc,callback:v=&gt;v+'%'},border:bc,min:40,max:90}}}</p>
+<p class="p1"><span class="Apple-converted-space">  </span>});</p>
+<p class="p1">})();</p>
+<p class="p2"><br></p>
+<p class="p1">// 히트맵</p>
+<p class="p1">(()=&gt;{</p>
+<p class="p1"><span class="Apple-converted-space">  </span>const el=document.getElementById('hmap'); if(!el) return;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>const h=['9시','10시','11시','13시','14시','15시','야간','새벽'];</p>
+<p class="p1"><span class="Apple-converted-space">  </span>const v=[420000,280000,150000,310000,220000,180000,580000,240000];</p>
+<p class="p1"><span class="Apple-converted-space">  </span>const mx=Math.max(...v);</p>
+<p class="p1"><span class="Apple-converted-space">  </span>h.forEach((lbl,i)=&gt;{</p>
+<p class="p1"><span class="Apple-converted-space">    </span>const pct=v[i]/mx, div=document.createElement('div');</p>
+<p class="p1"><span class="Apple-converted-space">    </span>div.style.cssText=`background:rgba(74,222,128,${0.08+pct*0.72});border-radius:8px;padding:12px 6px;text-align:center;`;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>div.innerHTML=`&lt;div style="font-size:10px;color:#6b7280;margin-bottom:4px"&gt;${lbl}&lt;/div&gt;&lt;div style="font-size:11px;font-family:'JetBrains Mono';color:#4ade80;font-weight:500"&gt;+${(v[i]/10000).toFixed(0)}만&lt;/div&gt;`;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>el.appendChild(div);</p>
+<p class="p1"><span class="Apple-converted-space">  </span>});</p>
+<p class="p1">})();</p>
+<p class="p2"><br></p>
+<p class="p1">// MDD</p>
+<p class="p1">(()=&gt;{</p>
+<p class="p1"><span class="Apple-converted-space">  </span>const c=document.getElementById('r-mdd'); if(!c) return;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>new Chart(c,{type:'bar',data:{labels:['10월','11월','12월','1월','2월','3월'],datasets:[{data:[-480000,-620000,-290000,-710000,-380000,-150000],backgroundColor:'rgba(248,113,113,0.65)',borderColor:'#f87171',borderWidth:1.5,borderRadius:4,barPercentage:0.5}]},</p>
+<p class="p1"><span class="Apple-converted-space">    </span>options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{...tt,callbacks:{label:i=&gt;`<span class="Apple-converted-space">  </span>MDD ${i.raw.toLocaleString()}원`}}},scales:{x:{grid:{color:gc},ticks:tc,border:bc},y:{grid:{color:gc},ticks:{...tc,callback:v=&gt;v.toLocaleString()},border:bc}}}</p>
+<p class="p1"><span class="Apple-converted-space">  </span>});</p>
+<p class="p1">})();</p>
+<p class="p2"><br></p>
+<p class="p1">// ── API 키 관리 (Gemini) ──</p>
+<p class="p1">let _apiKey = localStorage.getItem('malt_gemini_key') || '';</p>
+<p class="p2"><br></p>
+<p class="p1">function getApiKey() { return _apiKey; }</p>
+<p class="p1">function saveApiKey(k) { _apiKey = k; localStorage.setItem('malt_gemini_key', k); }</p>
+<p class="p2"><br></p>
+<p class="p1">// ── Gemini API 키 모달 ──</p>
+<p class="p1">function showKeyModal(onConfirm) {</p>
+<p class="p1"><span class="Apple-converted-space">  </span>const existing = document.getElementById('key-modal');</p>
+<p class="p1"><span class="Apple-converted-space">  </span>if (existing) existing.remove();</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>const modal = document.createElement('div');</p>
+<p class="p1"><span class="Apple-converted-space">  </span>modal.id = 'key-modal';</p>
+<p class="p1"><span class="Apple-converted-space">  </span>modal.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.75);z-index:9999;display:flex;align-items:center;justify-content:center;backdrop-filter:blur(4px)';</p>
+<p class="p1"><span class="Apple-converted-space">  </span>modal.innerHTML = `</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;div style="background:#111318;border:1px solid rgba(255,255,255,0.12);border-radius:16px;padding:32px;width:480px;max-width:90vw"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;div style="display:flex;align-items:center;gap:10px;margin-bottom:6px"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;span style="font-size:20px"&gt;🔑&lt;/span&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;div style="font-size:16px;font-weight:700"&gt;Google Gemini API 키 입력&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;div style="font-size:12px;color:#6b7280;margin-bottom:20px;line-height:1.8"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;a href="https://aistudio.google.com/app/apikey" target="_blank" style="color:#4285f4;text-decoration:none"&gt;aistudio.google.com&lt;/a&gt;에서 무료로 발급할 수 있습니다.&lt;br&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>키는 이 브라우저에만 저장되며 외부 서버로 전송되지 않습니다.</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;input id="key-input" type="password" placeholder="AIzaSy..." value="${getApiKey()}"</p>
+<p class="p1"><span class="Apple-converted-space">        </span>style="width:100%;background:#181c24;border:1px solid rgba(255,255,255,0.15);border-radius:8px;padding:11px 14px;color:#e8eaf0;font-family:'JetBrains Mono',monospace;font-size:13px;outline:none;margin-bottom:12px;transition:border-color .2s;box-sizing:border-box"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;div style="font-size:11px;color:#6b7280;margin-bottom:16px;padding:10px 12px;background:rgba(66,133,244,0.06);border:1px solid rgba(66,133,244,0.15);border-radius:8px"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>💡 Gemini 1.5 Flash 모델 사용 · 무료 티어로도 충분히 작동합니다</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;div style="display:flex;gap:10px;justify-content:flex-end"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;button onclick="document.getElementById('key-modal').remove()"</p>
+<p class="p1"><span class="Apple-converted-space">          </span>style="padding:9px 18px;border-radius:8px;border:1px solid rgba(255,255,255,0.12);background:#181c24;color:#6b7280;font-size:13px;cursor:pointer;font-family:'Noto Sans KR',sans-serif"&gt;취소&lt;/button&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;button id="key-confirm"</p>
+<p class="p1"><span class="Apple-converted-space">          </span>style="padding:9px 20px;border-radius:8px;border:none;background:#4285f4;color:#fff;font-size:13px;font-weight:600;cursor:pointer;font-family:'Noto Sans KR',sans-serif"&gt;저장 후 분석 시작&lt;/button&gt;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;/div&gt;`;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>document.body.appendChild(modal);</p>
+<p class="p1"><span class="Apple-converted-space">  </span>document.getElementById('key-input').focus();</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>document.getElementById('key-confirm').onclick = () =&gt; {</p>
+<p class="p1"><span class="Apple-converted-space">    </span>const k = document.getElementById('key-input').value.trim();</p>
+<p class="p1"><span class="Apple-converted-space">    </span>if (!k.startsWith('AIza')) {</p>
+<p class="p1"><span class="Apple-converted-space">      </span>const inp = document.getElementById('key-input');</p>
+<p class="p1"><span class="Apple-converted-space">      </span>inp.style.borderColor = '#f87171';</p>
+<p class="p1"><span class="Apple-converted-space">      </span>inp.style.boxShadow = '0 0 0 2px rgba(248,113,113,0.2)';</p>
+<p class="p1"><span class="Apple-converted-space">      </span>return;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>}</p>
+<p class="p1"><span class="Apple-converted-space">    </span>saveApiKey(k);</p>
+<p class="p1"><span class="Apple-converted-space">    </span>modal.remove();</p>
+<p class="p1"><span class="Apple-converted-space">    </span>onConfirm();</p>
+<p class="p1"><span class="Apple-converted-space">  </span>};</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>document.getElementById('key-input').addEventListener('keydown', ev =&gt; {</p>
+<p class="p1"><span class="Apple-converted-space">    </span>if (ev.key === 'Enter') document.getElementById('key-confirm').click();</p>
+<p class="p1"><span class="Apple-converted-space">  </span>});</p>
+<p class="p1">}</p>
+<p class="p2"><br></p>
+<p class="p1">// ── AI 일지 생성 (Gemini API) ──</p>
+<p class="p1">async function genJournal(sess, e) {</p>
+<p class="p1"><span class="Apple-converted-space">  </span>if (!getApiKey()) { showKeyModal(() =&gt; genJournal(sess, e)); return; }</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>const btn<span class="Apple-converted-space">    </span>= e.target;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>const textEl = document.getElementById(sess + '-ai-text');</p>
+<p class="p1"><span class="Apple-converted-space">  </span>const insEl<span class="Apple-converted-space">  </span>= document.getElementById(sess + '-ai-ins');</p>
+<p class="p1"><span class="Apple-converted-space">  </span>if (!textEl) return;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>btn.disabled = true;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>btn.textContent = '⟳ 분석 중...';</p>
+<p class="p1"><span class="Apple-converted-space">  </span>textEl.style.opacity = '0.3';</p>
+<p class="p1"><span class="Apple-converted-space">  </span>textEl.style.transition = 'opacity .4s';</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>const trades = sess === 'kr' ? krT : usT;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>const isKr <span class="Apple-converted-space">  </span>= sess === 'kr';</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>const tradeList = trades.map((t, i) =&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>`${i+1}. ${t.l}: 진입 ${t.entry.toLocaleString()} → 청산 ${t.exit.toLocaleString()}, 손익 ${t.ps}, ${t.w ? '익절' : '손절'}`</p>
+<p class="p1"><span class="Apple-converted-space">  </span>).join('\n');</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>const summary = isKr</p>
+<p class="p1"><span class="Apple-converted-space">    </span>? `세션: 한국 시장 (KOSPI)\n실현손익: +842,300원\n승률: 68.4% (익절9/손절4)\n손익비: 1:2.1\nKOSPI200 풋옵션 Delta -0.42, Theta -12.4, IV 18.3%`</p>
+<p class="p1"><span class="Apple-converted-space">    </span>: `세션: 미국 시장 (NYSE/CME)\n실현손익: +$1,248\n승률: 72.7% (익절8/손절3)\n손익비: 1:2.8\nSPY CALL525 Delta +0.58, Theta -$0.048, VIX 18.4`;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>const prompt = `당신은 전문 트레이딩 코치이자 매매일지 작가입니다. 아래 매매 데이터를 분석해주세요.</p>
+<p class="p2"><br></p>
+<p class="p1">${summary}</p>
+<p class="p2"><br></p>
+<p class="p1">[오늘 체결 내역]</p>
+<p class="p1">${tradeList}</p>
+<p class="p2"><br></p>
+<p class="p1">반드시 아래 JSON 형식으로만 응답하세요. 마크다운/코드블록 없이 순수 JSON만:</p>
+<p class="p1">{</p>
+<p class="p1"><span class="Apple-converted-space">  </span>"journal": "2~3문장 오늘 매매 흐름 요약. HTML &lt;strong&gt;태그&lt;/strong&gt;로 수치 강조. 한국어.",</p>
+<p class="p1"><span class="Apple-converted-space">  </span>"insight": "리스크·Greeks·손익비 핵심 인사이트 2~3문장. 구체적 수치와 액션 포함. 한국어.",</p>
+<p class="p1"><span class="Apple-converted-space">  </span>"verdict": "잘한 매매",</p>
+<p class="p1"><span class="Apple-converted-space">  </span>"score": 75</p>
+<p class="p1">}</p>
+<p class="p1">verdict는 반드시 셋 중 하나: 잘한 매매 / 아쉬운 매매 / 잘못된 매매`;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>try {</p>
+<p class="p1"><span class="Apple-converted-space">    </span>const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${getApiKey()}`;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>const res = await fetch(url, {</p>
+<p class="p1"><span class="Apple-converted-space">      </span>method: 'POST',</p>
+<p class="p1"><span class="Apple-converted-space">      </span>headers: { 'Content-Type': 'application/json' },</p>
+<p class="p1"><span class="Apple-converted-space">      </span>body: JSON.stringify({</p>
+<p class="p1"><span class="Apple-converted-space">        </span>contents: [{ parts: [{ text: prompt }] }],</p>
+<p class="p1"><span class="Apple-converted-space">        </span>generationConfig: {</p>
+<p class="p1"><span class="Apple-converted-space">          </span>temperature: 0.7,</p>
+<p class="p1"><span class="Apple-converted-space">          </span>maxOutputTokens: 1024,</p>
+<p class="p1"><span class="Apple-converted-space">          </span>responseMimeType: 'application/json'</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p1"><span class="Apple-converted-space">      </span>})</p>
+<p class="p1"><span class="Apple-converted-space">    </span>});</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>if (!res.ok) {</p>
+<p class="p1"><span class="Apple-converted-space">      </span>const err = await res.json();</p>
+<p class="p1"><span class="Apple-converted-space">      </span>const msg = err.error?.message || '';</p>
+<p class="p1"><span class="Apple-converted-space">      </span>if (res.status === 400) { saveApiKey(''); throw new Error('API 키가 유효하지 않습니다. 다시 확인해주세요.'); }</p>
+<p class="p1"><span class="Apple-converted-space">      </span>if (res.status === 429) throw new Error('요청 한도 초과. 잠시 후 다시 시도하세요.');</p>
+<p class="p1"><span class="Apple-converted-space">      </span>throw new Error(msg || `Gemini 오류 (${res.status})`);</p>
+<p class="p1"><span class="Apple-converted-space">    </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>const data<span class="Apple-converted-space">  </span>= await res.json();</p>
+<p class="p1"><span class="Apple-converted-space">    </span>const raw <span class="Apple-converted-space">  </span>= data.candidates?.[0]?.content?.parts?.[0]?.text || '';</p>
+<p class="p1"><span class="Apple-converted-space">    </span>const clean = raw.trim().replace(/^```json\s*|\s*```$/g, '').trim();</p>
+<p class="p1"><span class="Apple-converted-space">    </span>const fb<span class="Apple-converted-space">    </span>= JSON.parse(clean);</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>const vColor = { '잘한 매매':'#4ade80', '아쉬운 매매':'#fbbf24', '잘못된 매매':'#f87171' }[fb.verdict] || '#e8eaf0';</p>
+<p class="p1"><span class="Apple-converted-space">    </span>const score<span class="Apple-converted-space">  </span>= Math.min(100, Math.max(0, fb.score));</p>
+<p class="p1"><span class="Apple-converted-space">    </span>const scColor = score &gt;= 70 ? '#4ade80' : score &gt;= 50 ? '#fbbf24' : '#f87171';</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>textEl.innerHTML = `</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;div style="display:flex;align-items:center;gap:10px;margin-bottom:12px;flex-wrap:wrap"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;span style="color:${vColor};font-weight:700"&gt;[${fb.verdict}]&lt;/span&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;div style="display:flex;align-items:center;gap:6px"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">          </span>&lt;div style="width:80px;height:4px;background:rgba(255,255,255,0.08);border-radius:2px;overflow:hidden"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;div style="width:${score}%;height:100%;background:${scColor};border-radius:2px"&gt;&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">          </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">          </span>&lt;span style="color:#6b7280;font-size:11px;font-family:'JetBrains Mono',monospace"&gt;${score}점&lt;/span&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;span style="font-size:10px;color:#4285f4;background:rgba(66,133,244,0.1);padding:2px 8px;border-radius:4px;font-weight:600"&gt;Gemini&lt;/span&gt;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>${fb.journal}`;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>if (insEl) {</p>
+<p class="p1"><span class="Apple-converted-space">      </span>insEl.innerHTML = `&lt;div class="ai-ins-t"&gt;✦ Gemini 인사이트&lt;/div&gt;${fb.insight}`;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>insEl.style.borderColor = fb.verdict === '잘못된 매매'</p>
+<p class="p1"><span class="Apple-converted-space">        </span>? 'rgba(248,113,113,0.35)'</p>
+<p class="p1"><span class="Apple-converted-space">        </span>: fb.verdict === '아쉬운 매매'</p>
+<p class="p1"><span class="Apple-converted-space">          </span>? 'rgba(251,191,36,0.25)'</p>
+<p class="p1"><span class="Apple-converted-space">          </span>: 'rgba(66,133,244,0.2)';</p>
+<p class="p1"><span class="Apple-converted-space">    </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>textEl.style.opacity = '1';</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>} catch (err) {</p>
+<p class="p1"><span class="Apple-converted-space">    </span>textEl.innerHTML = `&lt;span style="color:#f87171"&gt;⚠ ${err.message}&lt;/span&gt;`;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>textEl.style.opacity = '1';</p>
+<p class="p1"><span class="Apple-converted-space">    </span>if (err.message.includes('키')) showKeyModal(() =&gt; genJournal(sess, e));</p>
+<p class="p1"><span class="Apple-converted-space">  </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>btn.disabled = false;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>btn.textContent = '✦ AI 일지 작성';</p>
+<p class="p1">}</p>
+<p class="p2"><br></p>
+<p class="p2"><br></p>
+<p class="p1">// ╔══════════════════════════════════════════════════════════╗</p>
+<p class="p1">// ║<span class="Apple-converted-space">          </span>CSV 파서 &amp; Google Drive 연동 시스템 <span class="Apple-converted-space">            </span>║</p>
+<p class="p1">// ╚══════════════════════════════════════════════════════════╝</p>
+<p class="p2"><br></p>
+<p class="p1">// ── 상태 표시 헬퍼 ──</p>
+<p class="p1">function setStatus(msg, color='var(--muted)') {</p>
+<p class="p1"><span class="Apple-converted-space">  </span>const el = document.getElementById('csv-status');</p>
+<p class="p1"><span class="Apple-converted-space">  </span>if (el) { el.textContent = msg; el.style.color = color; }</p>
+<p class="p1">}</p>
+<p class="p2"><br></p>
+<p class="p1">// ── 연결 상태 업데이트 ──</p>
+<p class="p1">function setConnStatus(session, loaded, count) {</p>
+<p class="p1"><span class="Apple-converted-space">  </span>const txt = document.getElementById(`conn-${session}-txt`);</p>
+<p class="p1"><span class="Apple-converted-space">  </span>const dot = document.getElementById(`dot-${session}`);</p>
+<p class="p1"><span class="Apple-converted-space">  </span>if (!txt || !dot) return;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>if (loaded) {</p>
+<p class="p1"><span class="Apple-converted-space">    </span>txt.textContent = session === 'kr' ? `키움 ${count}건 로드됨` : `나무 ${count}건 로드됨`;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>dot.style.background = session === 'kr' ? 'var(--green)' : 'var(--blue)';</p>
+<p class="p1"><span class="Apple-converted-space">    </span>dot.style.boxShadow<span class="Apple-converted-space">  </span>= session === 'kr' ? '0 0 5px var(--green)' : '0 0 5px var(--blue)';</p>
+<p class="p1"><span class="Apple-converted-space">  </span>} else {</p>
+<p class="p1"><span class="Apple-converted-space">    </span>txt.textContent = session === 'kr' ? '키움증권 대기중' : '나무증권 대기중';</p>
+<p class="p1"><span class="Apple-converted-space">  </span>}</p>
+<p class="p1">}</p>
+<p class="p2"><br></p>
+<p class="p1">// ══════════════════════════════════════════════════</p>
+<p class="p1">// CSV 로더 (메인 진입점)</p>
+<p class="p1">// ══════════════════════════════════════════════════</p>
+<p class="p1">function loadCSV(event, session) {</p>
+<p class="p1"><span class="Apple-converted-space">  </span>const file = event.target.files[0];</p>
+<p class="p1"><span class="Apple-converted-space">  </span>if (!file) return;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>setStatus('⟳ 파일 읽는 중...', 'var(--muted)');</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>// 키움은 EUC-KR, 나무(미국)는 UTF-8 시도 후 EUC-KR fallback</p>
+<p class="p1"><span class="Apple-converted-space">  </span>const enc = session === 'kr' ? 'EUC-KR' : 'UTF-8';</p>
+<p class="p1"><span class="Apple-converted-space">  </span>readFileWithEncoding(file, enc)</p>
+<p class="p1"><span class="Apple-converted-space">    </span>.then(text =&gt; processCSVText(text, session, file.name))</p>
+<p class="p1"><span class="Apple-converted-space">    </span>.catch(() =&gt; {</p>
+<p class="p1"><span class="Apple-converted-space">      </span>// UTF-8 실패 시 EUC-KR 재시도</p>
+<p class="p1"><span class="Apple-converted-space">      </span>return readFileWithEncoding(file, 'EUC-KR')</p>
+<p class="p1"><span class="Apple-converted-space">        </span>.then(text =&gt; processCSVText(text, session, file.name));</p>
+<p class="p1"><span class="Apple-converted-space">    </span>})</p>
+<p class="p1"><span class="Apple-converted-space">    </span>.catch(err =&gt; setStatus('⚠ ' + err.message, 'var(--red)'));</p>
+<p class="p1">}</p>
+<p class="p2"><br></p>
+<p class="p1">function readFileWithEncoding(file, encoding) {</p>
+<p class="p1"><span class="Apple-converted-space">  </span>return new Promise((resolve, reject) =&gt; {</p>
+<p class="p1"><span class="Apple-converted-space">    </span>const reader = new FileReader();</p>
+<p class="p1"><span class="Apple-converted-space">    </span>reader.onload<span class="Apple-converted-space">  </span>= e =&gt; resolve(e.target.result);</p>
+<p class="p1"><span class="Apple-converted-space">    </span>reader.onerror = () =&gt; reject(new Error('파일 읽기 실패'));</p>
+<p class="p1"><span class="Apple-converted-space">    </span>reader.readAsText(file, encoding);</p>
+<p class="p1"><span class="Apple-converted-space">  </span>});</p>
+<p class="p1">}</p>
+<p class="p2"><br></p>
+<p class="p1">// ── CSV 텍스트 처리 ──</p>
+<p class="p1">function processCSVText(text, session, filename) {</p>
+<p class="p1"><span class="Apple-converted-space">  </span>// 파일명으로 증권사 자동 감지</p>
+<p class="p1"><span class="Apple-converted-space">  </span>const broker = detectBroker(text, filename, session);</p>
+<p class="p1"><span class="Apple-converted-space">  </span>const trades = broker === 'kiwoom'</p>
+<p class="p1"><span class="Apple-converted-space">    </span>? parseKiwoomCSV(text)</p>
+<p class="p1"><span class="Apple-converted-space">    </span>: parseNamuCSV(text);</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>if (trades.length === 0) {</p>
+<p class="p1"><span class="Apple-converted-space">    </span>setStatus('⚠ 체결 데이터를 찾을 수 없습니다', 'var(--amber)');</p>
+<p class="p1"><span class="Apple-converted-space">    </span>return;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>// 전역 데이터 교체</p>
+<p class="p1"><span class="Apple-converted-space">  </span>if (session === 'kr') { krT.length = 0; krT.push(...trades); }</p>
+<p class="p1"><span class="Apple-converted-space">  </span>else<span class="Apple-converted-space">                  </span>{ usT.length = 0; usT.push(...trades); }</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>// 저장 &amp; 화면 갱신</p>
+<p class="p1"><span class="Apple-converted-space">  </span>const now = new Date().toLocaleString('ko-KR');</p>
+<p class="p1"><span class="Apple-converted-space">  </span>localStorage.setItem(`trades_${session}`,<span class="Apple-converted-space">      </span>JSON.stringify(trades));</p>
+<p class="p1"><span class="Apple-converted-space">  </span>localStorage.setItem(`trades_${session}_date`, now);</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>refreshDashboard(session, trades);</p>
+<p class="p1"><span class="Apple-converted-space">  </span>setConnStatus(session, true, trades.length);</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>const syncEl = document.getElementById('sync-time');</p>
+<p class="p1"><span class="Apple-converted-space">  </span>if (syncEl) syncEl.textContent = `마지막 로드: ${now}`;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>setStatus(`✓ ${trades.length}건 로드 완료 (${broker})`, 'var(--green)');</p>
+<p class="p1"><span class="Apple-converted-space">  </span>setSession(session);</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>// 입력 초기화 (같은 파일 재업로드 가능하게)</p>
+<p class="p1"><span class="Apple-converted-space">  </span>event &amp;&amp; event.target &amp;&amp; (event.target.value = '');</p>
+<p class="p1">}</p>
+<p class="p2"><br></p>
+<p class="p1">// ── 증권사 자동 감지 ──</p>
+<p class="p1">function detectBroker(text, filename, session) {</p>
+<p class="p1"><span class="Apple-converted-space">  </span>if (session === 'kr') {</p>
+<p class="p1"><span class="Apple-converted-space">    </span>if (filename.includes('키움') || filename.toLowerCase().includes('kiwoom')) return 'kiwoom';</p>
+<p class="p1"><span class="Apple-converted-space">    </span>if (text.includes('영웅문') || text.includes('체결잔고') || text.includes('매수단가')) return 'kiwoom';</p>
+<p class="p1"><span class="Apple-converted-space">    </span>return 'kiwoom'; // KR 기본값</p>
+<p class="p1"><span class="Apple-converted-space">  </span>} else {</p>
+<p class="p1"><span class="Apple-converted-space">    </span>return 'namu'; // US 기본값</p>
+<p class="p1"><span class="Apple-converted-space">  </span>}</p>
+<p class="p1">}</p>
+<p class="p2"><br></p>
+<p class="p1">// ══════════════════════════════════════════════════</p>
+<p class="p1">// 키움증권 CSV 파서 (영웅문4 체결잔고 0312 기준)</p>
+<p class="p1">// ══════════════════════════════════════════════════</p>
+<p class="p1">function parseKiwoomCSV(text) {</p>
+<p class="p1"><span class="Apple-converted-space">  </span>const trades = [];</p>
+<p class="p1"><span class="Apple-converted-space">  </span>const lines<span class="Apple-converted-space">  </span>= text.split(/\r?\n/).map(l =&gt; l.trim()).filter(l =&gt; l &amp;&amp; !l.startsWith('#'));</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>// 헤더 행 탐색 (종목명·체결·손익 중 하나라도 포함)</p>
+<p class="p1"><span class="Apple-converted-space">  </span>const headerKeywords = ['종목명','종목코드','매매구분','체결','손익','매수단가'];</p>
+<p class="p1"><span class="Apple-converted-space">  </span>let headerIdx = lines.findIndex(l =&gt; headerKeywords.some(k =&gt; l.includes(k)));</p>
+<p class="p1"><span class="Apple-converted-space">  </span>if (headerIdx === -1) headerIdx = 0;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>const headers = splitCSVLine(lines[headerIdx]);</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>// 컬럼 인덱스 사전 매핑 (유연하게)</p>
+<p class="p1"><span class="Apple-converted-space">  </span>const COL = {};</p>
+<p class="p1"><span class="Apple-converted-space">  </span>const colMap = {</p>
+<p class="p1"><span class="Apple-converted-space">    </span>name<span class="Apple-converted-space">  </span>: ['종목명','종목'],</p>
+<p class="p1"><span class="Apple-converted-space">    </span>buyPx : ['매수단가','평균매수가','매수가'],</p>
+<p class="p1"><span class="Apple-converted-space">    </span>sellPx: ['매도단가','평균매도가','매도가','청산가'],</p>
+<p class="p1"><span class="Apple-converted-space">    </span>pnl <span class="Apple-converted-space">  </span>: ['실현손익','손익금액','실현수익'],</p>
+<p class="p1"><span class="Apple-converted-space">    </span>qty <span class="Apple-converted-space">  </span>: ['수량','체결수량','매수수량'],</p>
+<p class="p1"><span class="Apple-converted-space">    </span>type<span class="Apple-converted-space">  </span>: ['매매구분','구분'],</p>
+<p class="p1"><span class="Apple-converted-space">    </span>date<span class="Apple-converted-space">  </span>: ['일자','체결일자','날짜'],</p>
+<p class="p1"><span class="Apple-converted-space">    </span>time<span class="Apple-converted-space">  </span>: ['체결시간','시간'],</p>
+<p class="p1"><span class="Apple-converted-space">  </span>};</p>
+<p class="p1"><span class="Apple-converted-space">  </span>Object.entries(colMap).forEach(([key, candidates]) =&gt; {</p>
+<p class="p1"><span class="Apple-converted-space">    </span>const idx = headers.findIndex(h =&gt; candidates.includes(h));</p>
+<p class="p1"><span class="Apple-converted-space">    </span>COL[key] = idx;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>});</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>for (let i = headerIdx + 1; i &lt; lines.length; i++) {</p>
+<p class="p1"><span class="Apple-converted-space">    </span>const cols = splitCSVLine(lines[i]);</p>
+<p class="p1"><span class="Apple-converted-space">    </span>if (cols.length &lt; 4) continue;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>const get = key =&gt; COL[key] &gt;= 0 ? (cols[COL[key]] || '') : '';</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>const name <span class="Apple-converted-space">  </span>= get('name');</p>
+<p class="p1"><span class="Apple-converted-space">    </span>const buyPx<span class="Apple-converted-space">  </span>= parseNum(get('buyPx'));</p>
+<p class="p1"><span class="Apple-converted-space">    </span>const sellPx = parseNum(get('sellPx'));</p>
+<p class="p1"><span class="Apple-converted-space">    </span>const pnl<span class="Apple-converted-space">    </span>= parseNum(get('pnl'));</p>
+<p class="p1"><span class="Apple-converted-space">    </span>const qty<span class="Apple-converted-space">    </span>= parseInt(get('qty').replace(/,/g,'')) || 1;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>const rawType = get('type');</p>
+<p class="p1"><span class="Apple-converted-space">    </span>const date <span class="Apple-converted-space">  </span>= get('date');</p>
+<p class="p1"><span class="Apple-converted-space">    </span>const time <span class="Apple-converted-space">  </span>= get('time');</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>// 유효성 검사</p>
+<p class="p1"><span class="Apple-converted-space">    </span>if (!name || name.length &lt; 2) continue;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>if (buyPx === 0 &amp;&amp; sellPx === 0) continue;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>const win<span class="Apple-converted-space">  </span>= pnl &gt; 0;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>const type = rawType.includes('선물') ? 'fut'</p>
+<p class="p1"><span class="Apple-converted-space">               </span>: rawType.includes('옵션') ? 'opt'</p>
+<p class="p1"><span class="Apple-converted-space">               </span>: rawType.includes('매도') ? 'short'</p>
+<p class="p1"><span class="Apple-converted-space">               </span>: 'long';</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>const absK = Math.abs(pnl);</p>
+<p class="p1"><span class="Apple-converted-space">    </span>trades.push({</p>
+<p class="p1"><span class="Apple-converted-space">      </span>l<span class="Apple-converted-space">    </span>: name,</p>
+<p class="p1"><span class="Apple-converted-space">      </span>entry: buyPx<span class="Apple-converted-space">  </span>|| sellPx,</p>
+<p class="p1"><span class="Apple-converted-space">      </span>exit : sellPx || buyPx,</p>
+<p class="p1"><span class="Apple-converted-space">      </span>pnl<span class="Apple-converted-space">  </span>: pnl,</p>
+<p class="p1"><span class="Apple-converted-space">      </span>ps <span class="Apple-converted-space">  </span>: `${win?'+':''}${pnl.toLocaleString()}원`,</p>
+<p class="p1"><span class="Apple-converted-space">      </span>pl <span class="Apple-converted-space">  </span>: `${win?'+':''}${(absK&gt;=10000 ? Math.round(absK/10000)+'만' : absK.toLocaleString())}`,</p>
+<p class="p1"><span class="Apple-converted-space">      </span>w<span class="Apple-converted-space">    </span>: win,</p>
+<p class="p1"><span class="Apple-converted-space">      </span>qty<span class="Apple-converted-space">  </span>: qty,</p>
+<p class="p1"><span class="Apple-converted-space">      </span>date : date,</p>
+<p class="p1"><span class="Apple-converted-space">      </span>time : time,</p>
+<p class="p1"><span class="Apple-converted-space">      </span>type : type,</p>
+<p class="p1"><span class="Apple-converted-space">    </span>});</p>
+<p class="p1"><span class="Apple-converted-space">  </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>return trades;</p>
+<p class="p1">}</p>
+<p class="p2"><br></p>
+<p class="p1">// ══════════════════════════════════════════════════</p>
+<p class="p1">// 나무증권(미국) CSV 파서</p>
+<p class="p1">// ══════════════════════════════════════════════════</p>
+<p class="p1">function parseNamuCSV(text) {</p>
+<p class="p1"><span class="Apple-converted-space">  </span>const trades = [];</p>
+<p class="p1"><span class="Apple-converted-space">  </span>const lines<span class="Apple-converted-space">  </span>= text.split(/\r?\n/).map(l =&gt; l.trim()).filter(l =&gt; l &amp;&amp; !l.startsWith('#'));</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>const headerKeywords = ['종목','매수','체결','Symbol','Ticker','Buy','Sell','P&amp;L'];</p>
+<p class="p1"><span class="Apple-converted-space">  </span>let headerIdx = lines.findIndex(l =&gt; headerKeywords.some(k =&gt; l.includes(k)));</p>
+<p class="p1"><span class="Apple-converted-space">  </span>if (headerIdx === -1) headerIdx = 0;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>const headers = splitCSVLine(lines[headerIdx]);</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>const COL = {};</p>
+<p class="p1"><span class="Apple-converted-space">  </span>const colMap = {</p>
+<p class="p1"><span class="Apple-converted-space">    </span>name<span class="Apple-converted-space">  </span>: ['종목명','Symbol','Ticker','종목'],</p>
+<p class="p1"><span class="Apple-converted-space">    </span>buyPx : ['매수가','Buy Price','진입가','Entry'],</p>
+<p class="p1"><span class="Apple-converted-space">    </span>sellPx: ['매도가','Sell Price','청산가','Exit'],</p>
+<p class="p1"><span class="Apple-converted-space">    </span>pnl <span class="Apple-converted-space">  </span>: ['손익','P&amp;L','실현손익','Realized'],</p>
+<p class="p1"><span class="Apple-converted-space">    </span>qty <span class="Apple-converted-space">  </span>: ['수량','Qty','Quantity'],</p>
+<p class="p1"><span class="Apple-converted-space">    </span>date<span class="Apple-converted-space">  </span>: ['일자','Date','날짜'],</p>
+<p class="p1"><span class="Apple-converted-space">    </span>cur <span class="Apple-converted-space">  </span>: ['통화','Currency'],</p>
+<p class="p1"><span class="Apple-converted-space">  </span>};</p>
+<p class="p1"><span class="Apple-converted-space">  </span>Object.entries(colMap).forEach(([key, candidates]) =&gt; {</p>
+<p class="p1"><span class="Apple-converted-space">    </span>const idx = headers.findIndex(h =&gt; candidates.some(c =&gt; h.includes(c)));</p>
+<p class="p1"><span class="Apple-converted-space">    </span>COL[key] = idx;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>});</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>for (let i = headerIdx + 1; i &lt; lines.length; i++) {</p>
+<p class="p1"><span class="Apple-converted-space">    </span>const cols = splitCSVLine(lines[i]);</p>
+<p class="p1"><span class="Apple-converted-space">    </span>if (cols.length &lt; 3) continue;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>const get = key =&gt; COL[key] &gt;= 0 ? (cols[COL[key]] || '') : '';</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>const name <span class="Apple-converted-space">  </span>= get('name').replace(/"/g,'');</p>
+<p class="p1"><span class="Apple-converted-space">    </span>const buyPx<span class="Apple-converted-space">  </span>= parseNum(get('buyPx').replace(/[$,]/g,''));</p>
+<p class="p1"><span class="Apple-converted-space">    </span>const sellPx = parseNum(get('sellPx').replace(/[$,]/g,''));</p>
+<p class="p1"><span class="Apple-converted-space">    </span>const pnl<span class="Apple-converted-space">    </span>= parseNum(get('pnl').replace(/[$,+]/g,''));</p>
+<p class="p1"><span class="Apple-converted-space">    </span>const qty<span class="Apple-converted-space">    </span>= parseInt(get('qty').replace(/,/g,'')) || 1;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>const date <span class="Apple-converted-space">  </span>= get('date');</p>
+<p class="p1"><span class="Apple-converted-space">    </span>const isUSD<span class="Apple-converted-space">  </span>= /^[A-Z]{1,5}[0-9]?$/.test(name) || get('cur') === 'USD';</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>if (!name || name.length &lt; 1) continue;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>if (buyPx === 0 &amp;&amp; sellPx === 0 &amp;&amp; pnl === 0) continue;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>const win = pnl &gt;= 0;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>const absP = Math.abs(pnl);</p>
+<p class="p1"><span class="Apple-converted-space">    </span>trades.push({</p>
+<p class="p1"><span class="Apple-converted-space">      </span>l<span class="Apple-converted-space">    </span>: name,</p>
+<p class="p1"><span class="Apple-converted-space">      </span>entry: buyPx<span class="Apple-converted-space">  </span>|| sellPx,</p>
+<p class="p1"><span class="Apple-converted-space">      </span>exit : sellPx || buyPx,</p>
+<p class="p1"><span class="Apple-converted-space">      </span>pnl<span class="Apple-converted-space">  </span>: pnl,</p>
+<p class="p1"><span class="Apple-converted-space">      </span>ps <span class="Apple-converted-space">  </span>: `${win?'+':''}${isUSD ? '$' : ''}${absP.toLocaleString()}`,</p>
+<p class="p1"><span class="Apple-converted-space">      </span>pl <span class="Apple-converted-space">  </span>: `${win?'+':''}${isUSD ? '$' : ''}${absP.toLocaleString()}`,</p>
+<p class="p1"><span class="Apple-converted-space">      </span>w<span class="Apple-converted-space">    </span>: win,</p>
+<p class="p1"><span class="Apple-converted-space">      </span>qty<span class="Apple-converted-space">  </span>: qty,</p>
+<p class="p1"><span class="Apple-converted-space">      </span>date : date,</p>
+<p class="p1"><span class="Apple-converted-space">      </span>type : name.includes('선물') || name.includes('ES') || name.includes('NQ') ? 'fut'</p>
+<p class="p1"><span class="Apple-converted-space">           </span>: name.includes('C ') || name.includes('P ') ? 'opt'</p>
+<p class="p1"><span class="Apple-converted-space">           </span>: 'long',</p>
+<p class="p1"><span class="Apple-converted-space">    </span>});</p>
+<p class="p1"><span class="Apple-converted-space">  </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>return trades;</p>
+<p class="p1">}</p>
+<p class="p2"><br></p>
+<p class="p1">// ── CSV 라인 파서 (따옴표 안 쉼표 처리) ──</p>
+<p class="p1">function splitCSVLine(line) {</p>
+<p class="p1"><span class="Apple-converted-space">  </span>const result = [];</p>
+<p class="p1"><span class="Apple-converted-space">  </span>let cur = '', inQ = false;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>for (let i = 0; i &lt; line.length; i++) {</p>
+<p class="p1"><span class="Apple-converted-space">    </span>const c = line[i];</p>
+<p class="p1"><span class="Apple-converted-space">    </span>if (c === '"') { inQ = !inQ; continue; }</p>
+<p class="p1"><span class="Apple-converted-space">    </span>if (c === ',' &amp;&amp; !inQ) { result.push(cur.trim()); cur = ''; continue; }</p>
+<p class="p1"><span class="Apple-converted-space">    </span>cur += c;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>}</p>
+<p class="p1"><span class="Apple-converted-space">  </span>result.push(cur.trim());</p>
+<p class="p1"><span class="Apple-converted-space">  </span>return result;</p>
+<p class="p1">}</p>
+<p class="p2"><br></p>
+<p class="p1">// ── 숫자 파싱 (한/영 혼용) ──</p>
+<p class="p1">function parseNum(s) {</p>
+<p class="p1"><span class="Apple-converted-space">  </span>if (!s) return 0;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>const n = parseFloat(String(s).replace(/,/g,'').replace(/[원₩]/g,'').trim());</p>
+<p class="p1"><span class="Apple-converted-space">  </span>return isNaN(n) ? 0 : n;</p>
+<p class="p1">}</p>
+<p class="p2"><br></p>
+<p class="p1">// ══════════════════════════════════════════════════</p>
+<p class="p1">// 대시보드 전체 새로고침</p>
+<p class="p1">// ══════════════════════════════════════════════════</p>
+<p class="p1">function refreshDashboard(session, trades) {</p>
+<p class="p1"><span class="Apple-converted-space">  </span>const wins <span class="Apple-converted-space">  </span>= trades.filter(t =&gt; t.w);</p>
+<p class="p1"><span class="Apple-converted-space">  </span>const losses = trades.filter(t =&gt; !t.w);</p>
+<p class="p1"><span class="Apple-converted-space">  </span>const total<span class="Apple-converted-space">  </span>= trades.reduce((s, t) =&gt; s + t.pnl, 0);</p>
+<p class="p1"><span class="Apple-converted-space">  </span>const avgW <span class="Apple-converted-space">  </span>= wins.length <span class="Apple-converted-space">  </span>? wins.reduce((s,t) =&gt; s + t.pnl, 0) / wins.length : 0;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>const avgL <span class="Apple-converted-space">  </span>= losses.length ? Math.abs(losses.reduce((s,t) =&gt; s + t.pnl, 0) / losses.length) : 1;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>const ratio<span class="Apple-converted-space">  </span>= avgL &gt; 0 ? (avgW / avgL).toFixed(1) : '∞';</p>
+<p class="p1"><span class="Apple-converted-space">  </span>const wr <span class="Apple-converted-space">    </span>= trades.length ? ((wins.length / trades.length) * 100).toFixed(1) + '%' : '0%';</p>
+<p class="p1"><span class="Apple-converted-space">  </span>const isKR <span class="Apple-converted-space">  </span>= session === 'kr';</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>// KPI 업데이트</p>
+<p class="p1"><span class="Apple-converted-space">  </span>const dash = document.getElementById(`dash-${session}`);</p>
+<p class="p1"><span class="Apple-converted-space">  </span>if (!dash) return;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>const kvals = dash.querySelectorAll('.kval');</p>
+<p class="p1"><span class="Apple-converted-space">  </span>const ksubs = dash.querySelectorAll('.ksub');</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>if (kvals[0]) {</p>
+<p class="p1"><span class="Apple-converted-space">    </span>kvals[0].textContent = `${total &gt;= 0 ? '+' : ''}${total.toLocaleString()}${isKR ? '' : ' USD'}`;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>kvals[0].className <span class="Apple-converted-space">  </span>= `kval ${total &gt;= 0 ? 'up' : 'dn'}`;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>}</p>
+<p class="p1"><span class="Apple-converted-space">  </span>if (kvals[1]) { kvals[1].textContent = wr; kvals[1].className = 'kval n'; }</p>
+<p class="p1"><span class="Apple-converted-space">  </span>if (kvals[2]) { kvals[2].textContent = trades.length; }</p>
+<p class="p1"><span class="Apple-converted-space">  </span>if (ksubs[2]) { ksubs[2].textContent = `익절 ${wins.length} / 손절 ${losses.length}`; }</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>// 차트 재렌더</p>
+<p class="p1"><span class="Apple-converted-space">  </span>const eeId<span class="Apple-converted-space">  </span>= session + '-ee';</p>
+<p class="p1"><span class="Apple-converted-space">  </span>const pnlId = session + '-pnl';</p>
+<p class="p1"><span class="Apple-converted-space">  </span>Chart.getChart(eeId)?.destroy();</p>
+<p class="p1"><span class="Apple-converted-space">  </span>Chart.getChart(pnlId)?.destroy();</p>
+<p class="p1"><span class="Apple-converted-space">  </span>makeEE(eeId, trades);</p>
+<p class="p1"><span class="Apple-converted-space">  </span>makePnl(pnlId, trades, isKR ? '원' : 'USD');</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>// 대시보드 미니 테이블 (최신 5건)</p>
+<p class="p1"><span class="Apple-converted-space">  </span>const tbody = dash.querySelector('tbody');</p>
+<p class="p1"><span class="Apple-converted-space">  </span>if (tbody) {</p>
+<p class="p1"><span class="Apple-converted-space">    </span>const typeLabel = { long:'매수', short:'매도', fut:'선물', opt:'옵션' };</p>
+<p class="p1"><span class="Apple-converted-space">    </span>tbody.innerHTML = trades.slice(0, 5).map(t =&gt; `</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;tr&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;td&gt;</p>
+<p class="p1"><span class="Apple-converted-space">          </span>&lt;div class="tk"&gt;${t.l}&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">          </span>&lt;div style="font-size:10px;color:var(--muted)"&gt;${t.date || ''} ${t.time || ''}&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;/td&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;td&gt;&lt;span class="tb ${t.type}"&gt;${typeLabel[t.type] || '매수'}&lt;/span&gt;&lt;/td&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;td class="mn"&gt;${t.entry.toLocaleString()}&lt;/td&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;td class="mn"&gt;${t.exit.toLocaleString()}&lt;/td&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;td class="${t.w ? 'pu' : 'pd'}"&gt;${t.ps}&lt;/td&gt;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;/tr&gt;`).join('');</p>
+<p class="p1"><span class="Apple-converted-space">  </span>}</p>
+<p class="p1">}</p>
+<p class="p2"><br></p>
+<p class="p1">// ══════════════════════════════════════════════════</p>
+<p class="p1">// Google Drive 연동</p>
+<p class="p1">// ══════════════════════════════════════════════════</p>
+<p class="p1">const GDRIVE_CONFIG = {</p>
+<p class="p1"><span class="Apple-converted-space">  </span>CLIENT_ID: '', <span class="Apple-converted-space">  </span>// ← Google Cloud Console에서 발급 (선택사항)</p>
+<p class="p1"><span class="Apple-converted-space">  </span>API_KEY: '', <span class="Apple-converted-space">    </span>// ← Google Cloud Console에서 발급 (선택사항)</p>
+<p class="p1">};</p>
+<p class="p2"><br></p>
+<p class="p1">function openGDrivePicker() {</p>
+<p class="p1"><span class="Apple-converted-space">  </span>// 방법 1: Google Drive 공유 링크로 직접 다운로드 (API 키 불필요)</p>
+<p class="p1"><span class="Apple-converted-space">  </span>showGDriveModal();</p>
+<p class="p1">}</p>
+<p class="p2"><br></p>
+<p class="p1">function showGDriveModal() {</p>
+<p class="p1"><span class="Apple-converted-space">  </span>const ex = document.getElementById('gdrive-modal');</p>
+<p class="p1"><span class="Apple-converted-space">  </span>if (ex) ex.remove();</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>const modal = document.createElement('div');</p>
+<p class="p1"><span class="Apple-converted-space">  </span>modal.id = 'gdrive-modal';</p>
+<p class="p1"><span class="Apple-converted-space">  </span>modal.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.75);z-index:9999;display:flex;align-items:center;justify-content:center;backdrop-filter:blur(4px)';</p>
+<p class="p1"><span class="Apple-converted-space">  </span>modal.innerHTML = `</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;div style="background:#111318;border:1px solid rgba(255,255,255,0.12);border-radius:16px;padding:28px;width:500px;max-width:92vw"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;div style="display:flex;align-items:center;gap:10px;margin-bottom:18px"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;span style="font-size:20px"&gt;☁&lt;/span&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">          </span>&lt;div style="font-size:15px;font-weight:700"&gt;Google Drive에서 가져오기&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">          </span>&lt;div style="font-size:11px;color:var(--muted);margin-top:2px"&gt;CSV 파일을 Drive에 올리고 공유 링크를 붙여넣으세요&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;/div&gt;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;div style="background:rgba(66,133,244,0.06);border:1px solid rgba(66,133,244,0.15);border-radius:8px;padding:12px 14px;margin-bottom:16px;font-size:11px;color:var(--muted);line-height:1.8"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;div style="color:#4285f4;font-weight:600;margin-bottom:5px"&gt;📋 사용 방법&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>1. Google Drive에 CSV 파일 업로드&lt;br&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>2. 파일 우클릭 → &lt;strong style="color:var(--text)"&gt;공유 → 링크 복사&lt;/strong&gt; (뷰어 권한)&lt;br&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>3. 아래에 링크 붙여넣기 → 세션 선택 후 불러오기</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;/div&gt;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;div style="margin-bottom:12px"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;div style="font-size:11px;color:var(--muted);margin-bottom:6px"&gt;Google Drive 공유 링크&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;input id="gdrive-url" type="text" placeholder="https://drive.google.com/file/d/..."</p>
+<p class="p1"><span class="Apple-converted-space">          </span>style="width:100%;background:#181c24;border:1px solid rgba(255,255,255,0.15);border-radius:8px;padding:10px 12px;color:var(--text);font-size:12px;font-family:'JetBrains Mono',monospace;outline:none;box-sizing:border-box"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;/div&gt;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;div style="margin-bottom:16px"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;div style="font-size:11px;color:var(--muted);margin-bottom:8px"&gt;매매 세션&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;div style="display:flex;gap:8px"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">          </span>&lt;label style="flex:1;display:flex;align-items:center;gap:8px;padding:9px 12px;border:1px solid var(--border2);border-radius:8px;cursor:pointer;font-size:12px" id="gdrive-kr-lbl"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;input type="radio" name="gdrive-sess" value="kr" checked style="accent-color:var(--green)"&gt; 🇰🇷 한국 (키움)</p>
+<p class="p1"><span class="Apple-converted-space">          </span>&lt;/label&gt;</p>
+<p class="p1"><span class="Apple-converted-space">          </span>&lt;label style="flex:1;display:flex;align-items:center;gap:8px;padding:9px 12px;border:1px solid var(--border2);border-radius:8px;cursor:pointer;font-size:12px" id="gdrive-us-lbl"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;input type="radio" name="gdrive-sess" value="us" style="accent-color:var(--blue)"&gt; 🇺🇸 미국 (나무)</p>
+<p class="p1"><span class="Apple-converted-space">          </span>&lt;/label&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;/div&gt;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;div style="display:flex;gap:10px;justify-content:flex-end"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;button onclick="document.getElementById('gdrive-modal').remove()"</p>
+<p class="p1"><span class="Apple-converted-space">          </span>style="padding:9px 18px;border-radius:8px;border:1px solid rgba(255,255,255,0.12);background:#181c24;color:var(--muted);font-size:13px;cursor:pointer;font-family:'Noto Sans KR',sans-serif"&gt;취소&lt;/button&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;button onclick="fetchGDriveFile()" id="gdrive-confirm"</p>
+<p class="p1"><span class="Apple-converted-space">          </span>style="padding:9px 20px;border-radius:8px;border:none;background:#4285f4;color:#fff;font-size:13px;font-weight:600;cursor:pointer;font-family:'Noto Sans KR',sans-serif"&gt;불러오기&lt;/button&gt;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;/div&gt;`;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>document.body.appendChild(modal);</p>
+<p class="p1"><span class="Apple-converted-space">  </span>document.getElementById('gdrive-url').focus();</p>
+<p class="p1">}</p>
+<p class="p2"><br></p>
+<p class="p1">// Google Drive 공유 링크 → 다운로드 URL 변환</p>
+<p class="p1">function gdriveShareToDownload(shareUrl) {</p>
+<p class="p1"><span class="Apple-converted-space">  </span>// 형식: https://drive.google.com/file/d/FILE_ID/view?...</p>
+<p class="p1"><span class="Apple-converted-space">  </span>const m = shareUrl.match(/\/d\/([a-zA-Z0-9_-]+)/);</p>
+<p class="p1"><span class="Apple-converted-space">  </span>if (!m) throw new Error('올바른 Google Drive 공유 링크가 아닙니다');</p>
+<p class="p1"><span class="Apple-converted-space">  </span>const fileId = m[1];</p>
+<p class="p1"><span class="Apple-converted-space">  </span>// CORS 우회: Google Drive 직접 export URL 사용</p>
+<p class="p1"><span class="Apple-converted-space">  </span>return `https://drive.google.com/uc?export=download&amp;id=${fileId}`;</p>
+<p class="p1">}</p>
+<p class="p2"><br></p>
+<p class="p1">async function fetchGDriveFile() {</p>
+<p class="p1"><span class="Apple-converted-space">  </span>const url<span class="Apple-converted-space">  </span>= document.getElementById('gdrive-url').value.trim();</p>
+<p class="p1"><span class="Apple-converted-space">  </span>const sess = document.querySelector('input[name="gdrive-sess"]:checked').value;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>const btn<span class="Apple-converted-space">  </span>= document.getElementById('gdrive-confirm');</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>if (!url) {</p>
+<p class="p1"><span class="Apple-converted-space">    </span>document.getElementById('gdrive-url').style.borderColor = 'var(--red)';</p>
+<p class="p1"><span class="Apple-converted-space">    </span>return;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>btn.textContent = '⟳ 다운로드 중...';</p>
+<p class="p1"><span class="Apple-converted-space">  </span>btn.disabled = true;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>try {</p>
+<p class="p1"><span class="Apple-converted-space">    </span>const dlUrl = gdriveShareToDownload(url);</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>// CORS 이슈가 있을 경우 CORS 프록시 사용</p>
+<p class="p1"><span class="Apple-converted-space">    </span>const proxyUrl = `https://corsproxy.io/?${encodeURIComponent(dlUrl)}`;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>const res = await fetch(proxyUrl);</p>
+<p class="p1"><span class="Apple-converted-space">    </span>if (!res.ok) throw new Error(`다운로드 실패 (${res.status}). 파일 공유 설정을 확인하세요.`);</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>const text = await res.text();</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>document.getElementById('gdrive-modal').remove();</p>
+<p class="p1"><span class="Apple-converted-space">    </span>processCSVText(text, sess, url);</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>} catch(err) {</p>
+<p class="p1"><span class="Apple-converted-space">    </span>btn.textContent = '불러오기';</p>
+<p class="p1"><span class="Apple-converted-space">    </span>btn.disabled = false;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>document.getElementById('gdrive-url').style.borderColor = 'var(--red)';</p>
+<p class="p1"><span class="Apple-converted-space">    </span>setStatus('⚠ ' + err.message, 'var(--red)');</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>// 에러 인라인 표시</p>
+<p class="p1"><span class="Apple-converted-space">    </span>const errDiv = document.createElement('div');</p>
+<p class="p1"><span class="Apple-converted-space">    </span>errDiv.style.cssText = 'font-size:11px;color:var(--red);margin-top:8px;padding:8px;background:rgba(248,113,113,0.08);border-radius:6px';</p>
+<p class="p1"><span class="Apple-converted-space">    </span>errDiv.textContent = '⚠ ' + err.message;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>document.getElementById('gdrive-confirm').parentElement.before(errDiv);</p>
+<p class="p1"><span class="Apple-converted-space">  </span>}</p>
+<p class="p1">}</p>
+<p class="p2"><br></p>
+<p class="p1">// ══════════════════════════════════════════════════</p>
+<p class="p1">// 페이지 로드 시 localStorage 복원</p>
+<p class="p1">// ══════════════════════════════════════════════════</p>
+<p class="p1">window.addEventListener('load', () =&gt; {</p>
+<p class="p1"><span class="Apple-converted-space">  </span>['kr', 'us'].forEach(session =&gt; {</p>
+<p class="p1"><span class="Apple-converted-space">    </span>try {</p>
+<p class="p1"><span class="Apple-converted-space">      </span>const saved <span class="Apple-converted-space">    </span>= localStorage.getItem(`trades_${session}`);</p>
+<p class="p1"><span class="Apple-converted-space">      </span>const savedDate = localStorage.getItem(`trades_${session}_date`);</p>
+<p class="p1"><span class="Apple-converted-space">      </span>if (!saved) return;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">      </span>const trades = JSON.parse(saved);</p>
+<p class="p1"><span class="Apple-converted-space">      </span>if (!Array.isArray(trades) || trades.length === 0) return;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">      </span>if (session === 'kr') { krT.length = 0; krT.push(...trades); }</p>
+<p class="p1"><span class="Apple-converted-space">      </span>else<span class="Apple-converted-space">                  </span>{ usT.length = 0; usT.push(...trades); }</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">      </span>refreshDashboard(session, trades);</p>
+<p class="p1"><span class="Apple-converted-space">      </span>setConnStatus(session, true, trades.length);</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">      </span>const syncEl = document.getElementById('sync-time');</p>
+<p class="p1"><span class="Apple-converted-space">      </span>if (syncEl &amp;&amp; savedDate) syncEl.textContent = `마지막 로드: ${savedDate}`;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>} catch(e) {</p>
+<p class="p1"><span class="Apple-converted-space">      </span>console.warn(`[${session}] localStorage 복원 실패:`, e);</p>
+<p class="p1"><span class="Apple-converted-space">      </span>localStorage.removeItem(`trades_${session}`);</p>
+<p class="p1"><span class="Apple-converted-space">    </span>}</p>
+<p class="p1"><span class="Apple-converted-space">  </span>});</p>
+<p class="p1">});</p>
+<p class="p1">&lt;/script&gt;</p>
+<p class="p1">&lt;/body&gt;</p>
+<p class="p1">&lt;/html&gt;</p>
+</body>
+</html>
