@@ -1313,8 +1313,6 @@ window.addEventListener('load', () => {
   }, 2000); // 페이지 완전 로드 후 2초 뒤
 });
 
-});
-
 
 // ── 페이지별 지연 차트 초기화 ──
 function initJournalCharts() {
@@ -1367,6 +1365,13 @@ function initRiskCharts() {
       plugins:{legend:{display:false},tooltip:{...tt,callbacks:{label:i=>`  MDD ${i.raw.toLocaleString()}원`}}},
       scales:{x:{grid:{color:gc},ticks:tc,border:bc},y:{grid:{color:gc},ticks:{...tc,callback:v=>v.toLocaleString()},border:bc}}}
   });
+}
+
+// ── 페이지 차트 지연 초기화 라우터 ──
+function initPageCharts(id) {
+  if (id === 'aijournal') initJournalCharts();
+  if (id === 'analysis')  initAnalysisCharts();
+  if (id === 'risk')      initRiskCharts();
 }
 
 // ── 모바일 사이드바 토글 ──
