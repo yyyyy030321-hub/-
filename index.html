@@ -426,49 +426,95 @@ body{background:var(--bg);color:var(--text);font-family:'Noto Sans KR',sans-seri
     <div class="kcard cp"><div class="klbl">총 거래일</div><div class="kval n" id="tr-days">—</div><div class="ksub" id="tr-days-sub" style="color:var(--muted)">기간</div></div>
   </div>
 
-  <!-- Google Drive 자동 동기화 -->
+  <!-- 데이터 가져오기 -->
   <div class="card col1" style="margin-bottom:14px;padding:16px 20px">
-    <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px">
+    <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;margin-bottom:14px">
       <div>
-        <div class="ctitle" style="display:flex;align-items:center;gap:8px">
-          ☁ Google Drive 자동 동기화
-          <span id="gdrive-sync-dot" style="width:7px;height:7px;border-radius:50%;background:var(--muted);display:inline-block"></span>
-        </div>
-        <div class="csub" id="gdrive-sync-status-txt">드라이브에 CSV 업로드 → 불러오기 버튼 한 번으로 자동 반영</div>
+        <div class="ctitle">📂 데이터 가져오기</div>
+        <div class="csub" id="import-status-txt">CSV 파일 업로드 또는 내용 직접 붙여넣기</div>
       </div>
-      <div style="display:flex;gap:8px;align-items:center">
-        <button class="btn btn-g" style="font-size:11px" onclick="toggleGDriveSync()">⚙ 링크 설정</button>
-        <button class="btn btn-green" style="font-size:12px;padding:8px 16px" onclick="manualSync(curSession,this)" id="manual-sync-btn">🔄 지금 불러오기</button>
+      <div style="display:flex;gap:8px;flex-wrap:wrap">
+        <label style="cursor:pointer">
+          <span class="btn btn-g" style="display:inline-block;font-size:12px">🇰🇷 키움 CSV 업로드</span>
+          <input type="file" accept=".csv" style="display:none" onchange="loadCSV(event,'kr')">
+        </label>
+        <label style="cursor:pointer">
+          <span class="btn btn-g" style="display:inline-block;font-size:12px">🇺🇸 나무 CSV 업로드</span>
+          <input type="file" accept=".csv" style="display:none" onchange="loadCSV(event,'us')">
+        </label>
+        <button class="btn btn-g" style="font-size:12px" onclick="togglePastePanel()">📋 CSV 붙여넣기</button>
       </div>
     </div>
-    <div id="gdrive-sync-panel" style="display:none;margin-top:14px;padding-top:14px;border-top:1px solid var(--border)">
-      <div style="font-size:11px;color:var(--muted);line-height:1.9;margin-bottom:12px;padding:10px 14px;background:rgba(66,133,244,0.05);border-radius:8px;border:1px solid rgba(66,133,244,0.12)">
-        <strong style="color:#4285f4">📋 설정 방법</strong><br>
-        1. Google Drive에 CSV 파일 업로드<br>
-        2. 파일 우클릭 → <strong style="color:var(--text)">공유 → "링크 있는 모든 사용자" → 링크 복사</strong><br>
-        3. 아래에 붙여넣기 → 저장 → <strong style="color:var(--text)">🔄 지금 불러오기</strong> 클릭
+
+    <!-- CSV 직접 붙여넣기 패널 -->
+    <div id="paste-panel" style="display:none;border-top:1px solid var(--border);padding-top:14px">
+      <div style="font-size:11px;color:var(--muted);margin-bottom:10px;line-height:1.8;padding:10px 12px;background:rgba(74,222,128,0.04);border-radius:8px;border:1px solid rgba(74,222,128,0.12)">
+        <strong style="color:var(--green)">📋 사용 방법</strong><br>
+        1. 키움증권/나무증권에서 CSV 파일을 메모장(텍스트 편집기)으로 열기<br>
+        2. 전체 선택(Ctrl+A) → 복사(Ctrl+C)<br>
+        3. 아래 칸에 붙여넣기(Ctrl+V) → 세션 선택 → 가져오기 클릭
       </div>
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px">
-        <div>
-          <div style="font-size:11px;color:var(--muted);margin-bottom:6px">🇰🇷 한국 (키움증권) CSV 링크</div>
-          <div style="display:flex;gap:6px">
-            <input id="gdrive-url-kr" type="text" placeholder="https://drive.google.com/file/d/..."
-              style="flex:1;background:var(--bg3);border:1px solid var(--border2);border-radius:8px;padding:8px 10px;color:var(--text);font-size:11px;font-family:'JetBrains Mono',monospace;outline:none;min-width:0">
-            <button onclick="saveGDriveUrl('kr')" class="btn btn-green" style="font-size:11px;padding:8px 12px;white-space:nowrap">저장</button>
-          </div>
+      <div style="margin-bottom:10px">
+        <textarea id="csv-paste-area" rows="6" placeholder="여기에 CSV 내용을 붙여넣으세요..."
+          style="width:100%;background:var(--bg3);border:1px solid var(--border2);border-radius:8px;padding:10px 12px;color:var(--text);font-size:11px;font-family:'JetBrains Mono',monospace;resize:vertical;outline:none;line-height:1.6;box-sizing:border-box"></textarea>
+      </div>
+      <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+        <div style="display:flex;gap:4px;background:var(--bg3);padding:3px;border-radius:8px;border:1px solid var(--border)">
+          <button onclick="setPasteSession('kr')" id="paste-btn-kr"
+            style="padding:6px 14px;border-radius:6px;font-size:12px;cursor:pointer;border:none;background:var(--green);color:#071407;font-weight:500;font-family:'Noto Sans KR',sans-serif">🇰🇷 한국</button>
+          <button onclick="setPasteSession('us')" id="paste-btn-us"
+            style="padding:6px 14px;border-radius:6px;font-size:12px;cursor:pointer;border:none;background:transparent;color:var(--muted);font-family:'Noto Sans KR',sans-serif">🇺🇸 미국</button>
         </div>
-        <div>
-          <div style="font-size:11px;color:var(--muted);margin-bottom:6px">🇺🇸 미국 (나무증권) CSV 링크</div>
-          <div style="display:flex;gap:6px">
-            <input id="gdrive-url-us" type="text" placeholder="https://drive.google.com/file/d/..."
-              style="flex:1;background:var(--bg3);border:1px solid var(--border2);border-radius:8px;padding:8px 10px;color:var(--text);font-size:11px;font-family:'JetBrains Mono',monospace;outline:none;min-width:0">
-            <button onclick="saveGDriveUrl('us')" class="btn btn-blue" style="font-size:11px;padding:8px 12px;white-space:nowrap">저장</button>
+        <button onclick="importPastedCSV()"
+          style="padding:7px 18px;border-radius:8px;border:none;background:var(--green);color:#071407;font-size:12px;font-weight:600;cursor:pointer;font-family:'Noto Sans KR',sans-serif">가져오기</button>
+        <button onclick="togglePastePanel()"
+          style="padding:7px 14px;border-radius:8px;border:1px solid var(--border2);background:transparent;color:var(--muted);font-size:12px;cursor:pointer;font-family:'Noto Sans KR',sans-serif">닫기</button>
+      </div>
+    </div>
+
+    <!-- Drive 링크 설정 (접이식) -->
+    <div style="margin-top:12px;border-top:1px solid var(--border);padding-top:12px">
+      <div style="display:flex;align-items:center;justify-content:space-between">
+        <div style="font-size:11px;color:var(--muted);display:flex;align-items:center;gap:6px">
+          <span id="gdrive-sync-dot" style="width:6px;height:6px;border-radius:50%;background:var(--muted);display:inline-block;flex-shrink:0"></span>
+          <span id="gdrive-sync-status-txt">☁ Google Drive 자동 동기화 (선택 사항)</span>
+        </div>
+        <div style="display:flex;gap:6px">
+          <button class="btn btn-g" style="font-size:11px;padding:5px 10px" onclick="toggleGDriveSync()">⚙ 링크 설정</button>
+          <button class="btn btn-g" style="font-size:11px;padding:5px 10px" onclick="manualSync(curSession,this)" id="manual-sync-btn">🔄 불러오기</button>
+        </div>
+      </div>
+      <div id="gdrive-sync-panel" style="display:none;margin-top:12px">
+        <div style="font-size:11px;color:var(--muted);line-height:1.8;margin-bottom:10px;padding:10px 12px;background:rgba(66,133,244,0.05);border-radius:8px;border:1px solid rgba(66,133,244,0.12)">
+          <strong style="color:#4285f4">☁ Drive 연동 방법</strong><br>
+          1. Drive에 CSV 업로드 → 우클릭 → 공유<br>
+          2. <strong style="color:var(--text)">"링크 있는 모든 사용자" → 뷰어</strong> 로 설정<br>
+          3. 링크 복사 → 아래 붙여넣기 → 저장<br>
+          ※ 안 되면 위 <strong style="color:var(--green)">CSV 붙여넣기</strong> 방법이 더 확실해요
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+          <div>
+            <div style="font-size:11px;color:var(--muted);margin-bottom:5px">🇰🇷 한국 (키움) 링크</div>
+            <div style="display:flex;gap:5px">
+              <input id="gdrive-url-kr" type="text" placeholder="https://drive.google.com/file/d/..."
+                style="flex:1;background:var(--bg3);border:1px solid var(--border2);border-radius:8px;padding:7px 10px;color:var(--text);font-size:11px;font-family:'JetBrains Mono',monospace;outline:none;min-width:0">
+              <button onclick="saveGDriveUrl('kr')" style="padding:7px 12px;border-radius:8px;border:none;background:var(--green);color:#071407;font-size:11px;font-weight:600;cursor:pointer;font-family:'Noto Sans KR',sans-serif;white-space:nowrap">저장</button>
+            </div>
+          </div>
+          <div>
+            <div style="font-size:11px;color:var(--muted);margin-bottom:5px">🇺🇸 미국 (나무) 링크</div>
+            <div style="display:flex;gap:5px">
+              <input id="gdrive-url-us" type="text" placeholder="https://drive.google.com/file/d/..."
+                style="flex:1;background:var(--bg3);border:1px solid var(--border2);border-radius:8px;padding:7px 10px;color:var(--text);font-size:11px;font-family:'JetBrains Mono',monospace;outline:none;min-width:0">
+              <button onclick="saveGDriveUrl('us')" style="padding:7px 12px;border-radius:8px;border:none;background:var(--blue);color:#040f1c;font-size:11px;font-weight:600;cursor:pointer;font-family:'Noto Sans KR',sans-serif;white-space:nowrap">저장</button>
+            </div>
           </div>
         </div>
       </div>
     </div>
   </div>
 
+  <!-- 매매 내역 테이블 -->
   <!-- 매매 내역 테이블 -->
   <div class="card np">
     <div class="chdr p">
@@ -1270,6 +1316,37 @@ async function fetchWithProxy(targetUrl) {
   throw new Error('Drive 연결 실패: ' + (lastErr ? lastErr.message : '알 수 없는 오류'));
 }
 
+// ══ CSV 붙여넣기 패널 ══
+let _pasteSession = 'kr';
+
+function togglePastePanel() {
+  const p = document.getElementById('paste-panel');
+  if (!p) return;
+  p.style.display = (p.style.display === 'none' || !p.style.display) ? 'block' : 'none';
+  if (p.style.display === 'block') {
+    document.getElementById('csv-paste-area')?.focus();
+  }
+}
+
+function setPasteSession(sess) {
+  _pasteSession = sess;
+  const kr = document.getElementById('paste-btn-kr');
+  const us = document.getElementById('paste-btn-us');
+  if (kr) { kr.style.background = sess==='kr' ? 'var(--green)' : 'transparent'; kr.style.color = sess==='kr' ? '#071407' : 'var(--muted)'; }
+  if (us) { us.style.background = sess==='us' ? 'var(--blue)'  : 'transparent'; us.style.color = sess==='us' ? '#040f1c' : 'var(--muted)'; }
+}
+
+function importPastedCSV() {
+  const area = document.getElementById('csv-paste-area');
+  if (!area) return;
+  const text = area.value.trim();
+  if (!text) { setStatus('⚠ 붙여넣기 칸이 비어있습니다', 'var(--amber)'); return; }
+  if (!text.includes(',')) { setStatus('⚠ CSV 형식이 아닙니다 (쉼표로 구분된 데이터여야 해요)', 'var(--amber)'); return; }
+  processCSV(text, _pasteSession, 'paste_' + _pasteSession + '_' + todayKey() + '.csv');
+  area.value = '';
+  document.getElementById('paste-panel').style.display = 'none';
+}
+
 // ══ Google Drive UI 토글 ══
 function toggleGDriveSync() {
   const p = document.getElementById('gdrive-sync-panel');
@@ -1400,6 +1477,46 @@ function openGDrivePicker() {
   }, 150);
 }
 
+
+// ══ 파일 목록 렌더 ══
+function renderFilesList(session) {
+  const filesDB = loadFiles();
+  const files   = (filesDB[session] || []);
+  const card    = document.getElementById('files-card');
+  const list    = document.getElementById('files-list');
+  const badge   = document.getElementById('files-total-badge');
+  if (!card || !list) return;
+  if (!files.length) { card.style.display='none'; return; }
+  card.style.display = 'block';
+  const total = getAllTrades(session).length;
+  if (badge) badge.textContent = '총 '+total+'건 누적';
+  list.innerHTML = files.map((f,i) => `
+    <div style="display:flex;align-items:center;justify-content:space-between;padding:8px 12px;background:var(--bg3);border-radius:8px;border:1px solid var(--border)">
+      <div style="display:flex;align-items:center;gap:10px;min-width:0">
+        <span>${session==='kr'?'🇰🇷':'🇺🇸'}</span>
+        <div style="min-width:0">
+          <div style="font-size:12px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${escHtml(f.name)}</div>
+          <div style="font-size:10px;color:var(--muted)">${f.date} · ${f.count}건 중 ${f.added}건 추가</div>
+        </div>
+      </div>
+      <button onclick="removeFile('${session}',${i})" style="padding:3px 8px;border-radius:5px;background:rgba(248,113,113,0.1);border:1px solid rgba(248,113,113,0.2);color:var(--red);font-size:10px;cursor:pointer;margin-left:8px;flex-shrink:0">제거</button>
+    </div>`).join('');
+}
+
+function removeFile(session, idx) {
+  const filesDB = loadFiles();
+  if (!filesDB[session]) return;
+  const removed = filesDB[session].splice(idx,1)[0];
+  if (!removed) return;
+  if (!confirm('"'+removed.name+'" 데이터를 제거할까요?')) { filesDB[session].splice(idx,0,removed); return; }
+  saveFiles(filesDB);
+  if (!filesDB[session].length) {
+    const db=loadDB(); db[session]={}; saveDB(db);
+    if (session==='kr') krT.length=0; else usT.length=0;
+  }
+  renderTradesPage();
+  setStatus('"'+removed.name+'" 제거됨','var(--muted)');
+}
 
 // ══ 매매내역 페이지 렌더 ══
 function renderTradesPage() {
@@ -1781,5 +1898,8 @@ document.querySelectorAll('.nav-item, .sess-btn').forEach(el => {
   });
 });
 </script>
+
+<!-- 버전 뱃지 -->
+<div id="version-badge" style="position:fixed;bottom:12px;right:14px;z-index:999;font-size:11px;color:rgba(255,255,255,0.2);font-family:'JetBrains Mono',monospace;pointer-events:none;letter-spacing:.3px;user-select:none">v1.0</div>
 </body>
 </html>
