@@ -592,7 +592,7 @@ function goPage(id, el) {
   if (el) el.classList.add('on');
   if (id === 'trades') {
     renderTradesPage();
-    updateGDriveSyncStatus();
+    updateGDriveSyncUI();
   }
 }
 
@@ -605,7 +605,7 @@ function setSession(id) {
   // 매매내역 페이지가 열려있으면 세션 변경 시 재렌더
   if (document.getElementById('page-trades')?.classList.contains('on')) {
     renderTradesPage();
-    updateGDriveSyncStatus();
+    updateGDriveSyncUI();
   }
 }
 
@@ -1103,6 +1103,16 @@ function pNum(s) {
 }
 
 // ══ Google Drive 불러오기 ══
+function openGDrivePicker() {
+  // 매매내역 페이지로 이동해서 Drive 설정 패널 열기
+  goPage('trades', document.getElementById('ni-trades'));
+  setTimeout(() => {
+    const panel = document.getElementById('gdrive-sync-panel');
+    if (panel) panel.style.display = 'block';
+    document.getElementById('gdrive-url-kr')?.focus();
+  }, 150);
+}
+
 function toggleGDriveSync() {
   const p=document.getElementById('gdrive-sync-panel');
   if (!p) return;
@@ -1172,7 +1182,7 @@ async function manualSync(session, btn) {
       if (!text||text.length<20) throw new Error('파일이 비어있거나 너무 작습니다');
 
       // 해시 초기화 → 강제 재처리
-      const hashes=JSON.parse(localStorage.getItem(GDRIVE_HASH_V3=GDRIVE_HASH)||'{}');
+      const hashes=JSON.parse(localStorage.getItem(GDRIVE_HASH)||'{}');
       delete hashes[sess];
       localStorage.setItem(GDRIVE_HASH, JSON.stringify(hashes));
 
@@ -1525,7 +1535,7 @@ async function manualSync(session, btn) {
           const hashes = JSON.parse(localStorage.getItem(GDRIVE_HASH)||'{}');
           delete hashes[session]; // 해시 초기화 → 강제 재처리
           localStorage.setItem(GDRIVE_HASH, JSON.stringify(hashes));
-          processCSVText(text, session, 'gdrive_manual.csv');
+          processCSV(text, session, 'gdrive_manual.csv');
           setStatus('✓ Drive 동기화 완료', 'var(--green)');
           if (btn) { btn.textContent = '✓ 완료'; setTimeout(()=>{ btn.textContent=origText; btn.disabled=false; },1500); }
           return;
