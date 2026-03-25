@@ -208,7 +208,7 @@ textarea.inp{resize:vertical;line-height:1.6;font-family:'Noto Sans KR',sans-ser
         <button class="btn btn-green" onclick="genJournal('kr',event)">✦ AI 일지</button>
       </div>
     </div>
-    <div class="period-tabs">
+    <div class="period-tabs" id="dash-kr-period">
       <button class="period-tab on" onclick="setDashPeriod('kr','all',this)">전체</button>
       <button class="period-tab" onclick="setDashPeriod('kr','month',this)">이번달</button>
       <button class="period-tab" onclick="setDashPeriod('kr','week',this)">이번주</button>
@@ -238,7 +238,7 @@ textarea.inp{resize:vertical;line-height:1.6;font-family:'Noto Sans KR',sans-ser
         <button class="btn btn-blue" onclick="genJournal('us',event)">✦ AI 일지</button>
       </div>
     </div>
-    <div class="period-tabs">
+    <div class="period-tabs" id="dash-us-period">
       <button class="period-tab on" onclick="setDashPeriod('us','all',this)">전체</button>
       <button class="period-tab" onclick="setDashPeriod('us','month',this)">이번달</button>
       <button class="period-tab" onclick="setDashPeriod('us','week',this)">이번주</button>
@@ -1309,10 +1309,14 @@ function clearAllTrades(){
 let _dashCharts={};
 
 function setDashPeriod(session,period,btn){
-  const container=document.getElementById('dash-'+session+'-period');
-  container?.querySelectorAll('.period-tab').forEach(b=>b.classList.remove('on'));
+  // 컨테이너 id로 찾기, 없으면 btn의 부모로 fallback
+  const container = document.getElementById('dash-'+session+'-period')
+    || btn?.closest('.period-tabs');
+  if(container){
+    container.querySelectorAll('.period-tab').forEach(b => b.classList.remove('on'));
+  }
   btn?.classList.add('on');
-  refreshDashboard(session,period);
+  refreshDashboard(session, period);
 }
 
 function refreshDashboard(session,period='all'){
