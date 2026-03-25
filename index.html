@@ -984,6 +984,9 @@ function processCSV(text,session,filename){
   const syncEl=document.getElementById('sync-time');
   if(syncEl) syncEl.textContent='마지막: '+new Date().toLocaleTimeString('ko-KR');
 
+  // 해당 세션으로 자동 전환 (US 파일 올리면 US 탭으로 이동)
+  setSession(session);
+
   const activePage=document.querySelector('.page.on')?.id?.replace('page-','');
   if(activePage==='trades')   setTimeout(renderTradesPage,0);
   if(activePage==='calendar') setTimeout(renderCalendar,0);
@@ -1378,11 +1381,61 @@ function exportCSV(){
   a.click();
 }
 function clearAllTrades(){
-  if(!confirm(curSession.toUpperCase()+' 세션 전체 이력을 삭제하시겠습니까?\n되돌릴 수 없습니다.')) return;
-  const db=loadDB();db[curSession]={};saveDB(db);
-  const f=loadFiles();f[curSession]=[];saveFiles(f);
+  if(!confirm(curSession.toUpperCase()+' 세션의 전체 매매 이력을 삭제할까요?\n삭제 후 다시 CSV를 불러오면 새로 반영됩니다.')) return;
+
+  // DB 초기화
+  const db=loadDB();
+  db[curSession]={};
+  saveDB(db);
+
+  // 파일 목록 초기화
+  const f=loadFiles();
+  f[curSession]=[];
+  saveFiles(f);
+
+  // 사이드바 연결 상태 초기화
+  const dot=document.getElementById('dot-'+curSession);
+  const txt=document.getElementById('conn-'+curSession+'-txt');
+  if(dot) dot.style.background='var(--muted)';
+  if(dot) dot.style.boxShadow='none';
+  if(txt) txt.textContent=(curSession==='kr'?'키움':'나무')+' 미연결';
+
+  // 대시보드 KPI 초기화
+  const pfx=curSession==='kr'?'dk':'du';
+  const kpis=['total','wr','rr','cnt'];
+  kpis.forEach(k=>{
+    const el=document.getElementById(pfx+'-'+k);
+    if(el){el.textContent='—';el.className='kval n';}
+  });
+  const subs=['total-sub','wr-sub','cnt-sub'];
+  subs.forEach(k=>{
+    const el=document.getElementById(pfx+'-'+k);
+    if(el) el.textContent='데이터 없음';
+  });
+
+  // 대시보드 tbody 초기화
+  const tbody=document.getElementById(pfx+'-tbody');
+  if(tbody) tbody.innerHTML='<tr><td colspan="6" style="text-align:center;padding:30px;color:var(--muted)">CSV를 불러오면 자동으로 표시됩니다</td></tr>';
+
+  // 대시보드 차트 초기화
+  ['kr-pnl','kr-cum','us-pnl','us-cum'].forEach(id=>{
+    if(_dashCharts[id]){ try{_dashCharts[id].destroy()}catch{} delete _dashCharts[id]; }
+    const c=document.getElementById(id);
+    if(c){ const ctx=c.getContext('2d'); ctx.clearRect(0,0,c.width,c.height); }
+  });
+
+  // 날짜 표시 초기화
+  const dateEl=document.getElementById('dash-'+curSession+'-date');
+  if(dateEl) dateEl.textContent='데이터를 불러오면 자동 표시됩니다';
+
+  // 매매내역 페이지 초기화
   renderTradesPage();
-  setStatus('삭제 완료','var(--muted)');
+
+  setStatus('✓ 삭제 완료 — CSV를 다시 불러오세요','var(--muted)');
+
+  // sync-time 초기화
+  const st=document.getElementById('sync-time');
+  if(st) st.textContent='';
 }
 
 // ══════════════════════════════════════════════════════
