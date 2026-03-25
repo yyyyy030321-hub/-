@@ -803,80 +803,120 @@ function parseKiwoomCSV(text){
 
 
 // ══ 나무증권 해외주식 체결내역 파서 ══
-// 포맷: 2줄이 1쌍 — 홀수줄(날짜/거래구분/종목코드/수량/외화정산금액)
-//                   짝수줄(거래번호/상세구분/종목명한글/단가/환율/원화정산금액)
+// 포맷: 2줄 1쌍. 같은 종목+날짜의 매수/매도를 합산해 순손익으로 계산
 function parseNamuOverseasCSV(text){
-  const trades = [];
   const lines = text.split(/\r?\n/).map(l=>l.trim()).filter(l=>l);
 
   // 헤더 2줄 찾기
   let hi = -1;
   for(let i=0;i<lines.length-1;i++){
     if(lines[i].includes('실거래일자') && lines[i+1].includes('거래번호')){
-      hi = i; break;
+      hi=i; break;
     }
   }
-  if(hi === -1){
-    // fallback: 첫 줄부터 시도
-    hi = 0;
-  }
+  if(hi===-1) hi=0;
 
-  // 데이터는 hi+2 부터 2줄씩
-  for(let i = hi+2; i < lines.length-1; i += 2){
+  // ── 1단계: 모든 매수/매도 행 수집 ──
+  const rawRows = [];
+  for(let i=hi+2; i<lines.length-1; i+=2){
     const r1 = splitCSV(lines[i]);
     const r2 = splitCSV(lines[i+1]);
     if(r1.length < 8) continue;
 
-    const gtype = (r1[1]||'').trim();   // 매도/매수/출금
-    // 매도/매수만 처리 (출금/이체 등 제외)
+    const gtype  = (r1[1]||'').trim();
     if(gtype !== '매도' && gtype !== '매수') continue;
 
-    const date    = (r1[0]||'').trim();                          // 실거래일자
-    const nameKr  = (r2[2]||r1[2]||'').trim();                  // 종목명(한글)
-    const nameEn  = (r1[2]||'').trim().replace(/\s+US\s*$/,''); // 종목코드
-    const name    = nameKr || nameEn;
-    if(!name || name.length < 2) continue;
+    const date   = (r1[0]||'').trim();
+    const nameKr = (r2[2]||r1[2]||'').trim();
+    const nameEn = (r1[2]||'').trim();
+    const name   = nameKr || nameEn;
+    if(!name || name.length<2) continue;
 
-    const qty     = pNum((r1[3]||'').replace(/,/g,''));          // 수량
-    const price   = pNum((r2[3]||'').replace(/,/g,''));          // 단가(USD)
-    const fxAmt   = pNum((r1[7]||'').replace(/,/g,''));          // 외화정산금액(USD)
-    const rate    = pNum((r2[5]||'').replace(/,/g,''));          // 환율
-    const wonAmt  = pNum((r2[7]||'').replace(/,/g,''));          // 원화정산금액
+    const qty    = pNum((r1[3]||'').replace(/,/g,''));
+    const price  = pNum((r2[3]||'').replace(/,/g,''));   // 단가(USD)
+    const fxAmt  = pNum((r1[7]||'').replace(/,/g,''));   // 외화정산금액(USD)
+    const rate   = pNum((r2[5]||'').replace(/,/g,''));   // 환율
 
-    if(price === 0 && fxAmt === 0) continue;
+    if(fxAmt === 0 && price === 0) continue;
 
-    const isSell  = gtype === '매도';
-    // 손익: 매도는 받은 금액(양수), 매수는 지불한 금액(음수) — USD 기준
-    const pnlUSD  = isSell ? fxAmt : -fxAmt;
-    // 원화 환산 (환율 있으면 사용, 없으면 USD 그대로)
-    const pnlKRW  = rate > 0 ? Math.round(pnlUSD * rate) : 0;
-    const usePnl  = pnlKRW !== 0 ? pnlKRW : pnlUSD;
-    const isKRW   = pnlKRW !== 0;
-    const absP    = Math.abs(usePnl);
-    const sign    = usePnl >= 0 ? '+' : '';
+    rawRows.push({ date, name, gtype, qty, price, fxAmt, rate });
+  }
+
+  // ── 2단계: 종목 + 날짜로 그룹화 → 순손익 계산 ──
+  // 같은 날 같은 종목 = 매도합계 - 매수합계 = 실현손익
+  const groups = {};
+  rawRows.forEach(r => {
+    const key = r.date + '||' + r.name;
+    if(!groups[key]) groups[key] = {
+      date: r.date, name: r.name, rate: 0,
+      sellAmt: 0, buyAmt: 0,
+      sellQty: 0, buyQty: 0,
+      sellPrices: [], buyPrices: [],
+      sellCount: 0, buyCount: 0
+    };
+    const g = groups[key];
+    if(r.rate) g.rate = r.rate;
+    if(r.gtype === '매도'){
+      g.sellAmt   += r.fxAmt;
+      g.sellQty   += r.qty;
+      g.sellCount++;
+      if(r.price) g.sellPrices.push(r.price);
+    } else {
+      g.buyAmt    += r.fxAmt;
+      g.buyQty    += r.qty;
+      g.buyCount++;
+      if(r.price) g.buyPrices.push(r.price);
+    }
+  });
+
+  // ── 3단계: 그룹 → 거래 1건으로 변환 ──
+  const trades = [];
+  Object.values(groups).forEach(g => {
+    const netUSD = g.sellAmt - g.buyAmt;      // 매도 - 매수 = 순손익(USD)
+    const netKRW = g.rate > 0 ? Math.round(netUSD * g.rate) : 0;
+    const usePnl = netKRW !== 0 ? netKRW : netUSD;
+    const isKRW  = netKRW !== 0;
+    const win    = usePnl >= 0;
+    const absP   = Math.abs(usePnl);
+    const sign   = win ? '+' : '';
+
+    // 평균 진입가(매수평균) / 청산가(매도평균)
+    const avgEntry = g.buyPrices.length
+      ? g.buyPrices.reduce((a,b)=>a+b,0)/g.buyPrices.length : 0;
+    const avgExit  = g.sellPrices.length
+      ? g.sellPrices.reduce((a,b)=>a+b,0)/g.sellPrices.length : 0;
+
+    // 설명 라벨 (매수N건+매도M건)
+    const detail = [];
+    if(g.buyCount)  detail.push('매수'+g.buyCount+'건');
+    if(g.sellCount) detail.push('매도'+g.sellCount+'건');
 
     trades.push({
-      id:    Date.now() + '_' + Math.random().toString(36).slice(2,6),
-      l:     name,
-      entry: isSell ? 0 : price,   // 매수면 진입가, 매도면 0(미매칭)
-      exit:  isSell ? price : 0,   // 매도면 청산가, 매수면 0
-      pnl:   usePnl,
+      id:    Date.now()+'_'+Math.random().toString(36).slice(2,6),
+      l:     g.name,
+      entry: +avgEntry.toFixed(4),
+      exit:  +avgExit.toFixed(4),
+      pnl:   Math.round(usePnl * 100) / 100,
       ps:    sign + (isKRW
-               ? usePnl.toLocaleString() + '원'
-               : '$' + absP.toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2})),
+               ? Math.round(usePnl).toLocaleString() + '원'
+               : '$' + Math.abs(netUSD).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2})),
       pl:    sign + (isKRW
-               ? (absP>=10000 ? Math.round(absP/10000)+'만' : absP.toLocaleString())
-               : '$' + absP.toFixed(2)),
-      w:     isSell,   // 매도 = 수익 실현으로 간주
-      qty:   qty || 1,
-      date:  date,
-      type:  isSell ? 'short' : 'long',
-      rate:  rate,
-      fxAmt: fxAmt,
+               ? (absP>=10000 ? Math.round(absP/10000)+'만' : Math.round(absP).toLocaleString())
+               : '$' + Math.abs(netUSD).toFixed(2)),
+      w:     win,
+      qty:   Math.max(g.sellQty, g.buyQty),
+      date:  g.date,
+      type:  g.sellCount > 0 ? 'long' : 'long',
+      rate:  g.rate,
+      detail: detail.join('+'),
     });
-  }
+  });
+
+  // 날짜 오름차순 정렬
+  trades.sort((a,b)=>a.date.localeCompare(b.date));
   return trades;
 }
+
 
 function parseNamuCSV(text){
   const trades=[];
