@@ -999,16 +999,27 @@ function loadCSV(event,session){
   const file=event.target.files[0];
   if(!file) return;
   setStatus('⟳ 파일 읽는 중...','var(--muted)');
+
   const readAs=(enc)=>new Promise((res,rej)=>{
     const r=new FileReader();
     r.onload=e=>res(e.target.result);
     r.onerror=()=>rej(new Error('읽기 실패'));
     r.readAsText(file,enc);
   });
-  readAs(session==='kr'?'EUC-KR':'UTF-8')
-    .then(txt=>processCSV(txt,session,file.name))
-    .catch(()=>readAs('EUC-KR').then(txt=>processCSV(txt,session,file.name)))
-    .catch(e=>setStatus('⚠ '+e.message,'var(--red)'));
+
+  // EUC-KR과 UTF-8 둘 다 읽어서 한글이 더 많은 쪽 선택
+  // (FileReader는 인코딩 오류를 throw하지 않고 깨진 문자를 반환하므로)
+  Promise.all([readAs('EUC-KR'), readAs('UTF-8')]).then(([eucText, utfText])=>{
+    // 한글 문자 개수로 올바른 인코딩 판별
+    const countKorean = str => (str.match(/[가-힣]/g)||[]).length;
+    const eucKor = countKorean(eucText);
+    const utfKor = countKorean(utfText);
+    const text = eucKor >= utfKor ? eucText : utfText;
+    const detectedEnc = eucKor >= utfKor ? 'EUC-KR' : 'UTF-8';
+    console.log('[loadCSV]', file.name, '→', detectedEnc, '(한글 EUC:', eucKor, 'UTF:', utfKor, ')');
+    processCSV(text, session, file.name);
+  }).catch(e=>setStatus('⚠ '+e.message,'var(--red)'));
+
   event.target.value='';
 }
 
