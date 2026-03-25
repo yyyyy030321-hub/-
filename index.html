@@ -409,6 +409,15 @@ body{background:var(--bg);color:var(--text);font-family:'Noto Sans KR',sans-seri
     </div>
   </div>
 
+  <!-- 로드된 파일 목록 -->
+  <div id="files-card" class="card col1" style="margin-bottom:14px;padding:14px 20px;display:none">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
+      <div class="ctitle">📂 로드된 파일 목록</div>
+      <span id="files-total-badge" style="font-size:11px;color:var(--muted)"></span>
+    </div>
+    <div id="files-list" style="display:flex;flex-direction:column;gap:6px"></div>
+  </div>
+
   <!-- 누적 KPI -->
   <div class="kgrid k4">
     <div class="kcard"><div class="klbl">누적 총 손익</div><div class="kval n" id="tr-total">—</div><div class="ksub" id="tr-total-sub" style="color:var(--muted)">데이터 없음</div></div>
@@ -861,7 +870,8 @@ verdict는 반드시 셋 중 하나: 잘한 매매 / 아쉬운 매매 / 잘못�
 // ║  - 종목별 메모 / 수정 기능                                ║
 // ╚══════════════════════════════════════════════════════════╝
 
-const STORE_KEY  = 'malt_trades_v3';   // { kr:{날짜:{trades:[],memo:{종목:메모}}}, us:{...} }
+const STORE_KEY  = 'malt_trades_v3';   // { kr:{날짜:{trades:[],memos:{}}}, us:{...} }
+const FILES_KEY  = 'malt_files_v3';    // { kr:[{name,size,date,count}], us:[...] }
 const GDRIVE_KEY = 'malt_gdrive_v3';   // { kr:url, us:url }
 const GDRIVE_HASH= 'malt_gdrive_hash_v3';
 
@@ -871,6 +881,11 @@ function loadDB() {
   catch(e) { return {kr:{},us:{}}; }
 }
 function saveDB(db) { localStorage.setItem(STORE_KEY, JSON.stringify(db)); }
+function loadFiles() {
+  try { return JSON.parse(localStorage.getItem(FILES_KEY)||'{"kr":[],"us":[]}'); }
+  catch(e) { return {kr:[],us:[]}; }
+}
+function saveFiles(f) { localStorage.setItem(FILES_KEY, JSON.stringify(f)); }
 
 function loadUrls() {
   try { return JSON.parse(localStorage.getItem(GDRIVE_KEY)||'{}'); }
@@ -905,6 +920,23 @@ function getAllTrades(session) {
 }
 
 // ══ 날짜 정규화 ══
+// 파일명에서 날짜 추출 (예: 20250323.csv, 2025-03-23.csv, 체결_250323.csv)
+function extractDateFromFilename(filename) {
+  if (!filename) return null;
+  const patterns = [
+    /(\d{4})[-_.]?(\d{2})[-_.]?(\d{2})/,  // 20250323, 2025-03-23
+    /(\d{2})[-_.]?(\d{2})[-_.]?(\d{2})/,  // 250323
+  ];
+  for (const p of patterns) {
+    const m = filename.match(p);
+    if (m) {
+      if (m[1].length === 4) return m[1]+'-'+m[2]+'-'+m[3];
+      return '20'+m[1]+'-'+m[2]+'-'+m[3];
+    }
+  }
+  return null;
+}
+
 function normalizeDate(raw) {
   if (!raw) return todayKey();
   raw = String(raw).trim();
@@ -947,22 +979,48 @@ function processCSV(text, session, filename) {
     return;
   }
 
-  // 날짜별 그룹화
+  // 날짜별 그룹화 (날짜 없으면 파일명에서 추출 시도)
+  const fileDateGuess = extractDateFromFilename(filename);
   const byDate = {};
   trades.forEach(t => {
-    const d = normalizeDate(t.date);
+    const raw = t.date || fileDateGuess;
+    const d   = normalizeDate(raw);
     if (!byDate[d]) byDate[d] = [];
     byDate[d].push(t);
   });
 
-  // DB에 병합 (기존 메모 보존, 트레이드만 갱신)
+  // DB에 누적 병합 (덮어쓰기 X — 중복 제거 후 append)
   const db = loadDB();
   if (!db[session]) db[session] = {};
+  let addedCount = 0;
   Object.entries(byDate).forEach(([date, rows]) => {
     const existing = db[session][date] || {trades:[], memos:{}};
-    db[session][date] = { trades: rows, memos: existing.memos||{} };
+    // 중복 키: 종목명+매입가+매도가+손익 조합
+    const existKeys = new Set(
+      (existing.trades||[]).map(t => t.l+'|'+t.entry+'|'+t.exit+'|'+t.pnl)
+    );
+    const fresh = rows.filter(t => !existKeys.has(t.l+'|'+t.entry+'|'+t.exit+'|'+t.pnl));
+    addedCount += fresh.length;
+    db[session][date] = {
+      trades: [...(existing.trades||[]), ...fresh],
+      memos:  existing.memos||{}
+    };
   });
   saveDB(db);
+  
+  // 파일 목록 기록
+  const filesDB = loadFiles();
+  if (!filesDB[session]) filesDB[session] = [];
+  // 같은 파일명+건수면 중복 등록 방지
+  const fileKey = filename + '|' + trades.length;
+  if (!filesDB[session].some(f => f.key === fileKey)) {
+    filesDB[session].push({
+      key: fileKey, name: filename,
+      count: trades.length, added: addedCount,
+      date: new Date().toLocaleString('ko-KR')
+    });
+  }
+  saveFiles(filesDB);
 
   // 화면 갱신
   const all = getAllTrades(session);
@@ -973,7 +1031,8 @@ function processCSV(text, session, filename) {
   setConnStatus(session, true, all.length);
 
   const dates = Object.keys(byDate).sort().reverse();
-  setStatus('✓ '+trades.length+'건 추가 ('+dates[0]+')','var(--green)');
+  const dupCount = trades.length - addedCount;
+  setStatus('✓ '+addedCount+'건 추가'+(dupCount>0?' (중복 '+dupCount+'건 제외)':' ('+dates[0]+')'),'var(--green)');
 
   const syncEl = document.getElementById('sync-time');
   if (syncEl) syncEl.textContent = '마지막 동기화: '+new Date().toLocaleString('ko-KR');
@@ -1209,12 +1268,61 @@ async function manualSyncDash(session, btn) {
   await manualSync(session, btn);
 }
 
+// ══ 파일 목록 렌더 ══
+function renderFilesList(session) {
+  const filesDB = loadFiles();
+  const files   = filesDB[session] || [];
+  const card    = document.getElementById('files-card');
+  const list    = document.getElementById('files-list');
+  const badge   = document.getElementById('files-total-badge');
+  if (!card || !list) return;
+
+  if (!files.length) { card.style.display='none'; return; }
+  card.style.display = 'block';
+
+  const total = getAllTrades(session).length;
+  if (badge) badge.textContent = '총 '+total+'건 누적';
+
+  list.innerHTML = files.map((f,i) => `
+    <div style="display:flex;align-items:center;justify-content:space-between;padding:8px 12px;background:var(--bg3);border-radius:8px;border:1px solid var(--border)">
+      <div style="display:flex;align-items:center;gap:10px;min-width:0">
+        <span style="font-size:13px">${session==='kr'?'🇰🇷':'🇺🇸'}</span>
+        <div style="min-width:0">
+          <div style="font-size:12px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${escHtml(f.name)}</div>
+          <div style="font-size:10px;color:var(--muted)">${f.date} · ${f.count}건 중 ${f.added}건 추가</div>
+        </div>
+      </div>
+      <button onclick="removeFile('${session}',${i})" style="padding:3px 8px;border-radius:5px;background:rgba(248,113,113,0.1);border:1px solid rgba(248,113,113,0.2);color:var(--red);font-size:10px;cursor:pointer;flex-shrink:0;margin-left:8px">제거</button>
+    </div>`).join('');
+}
+
+// ── 파일 개별 제거 ──
+function removeFile(session, idx) {
+  const filesDB = loadFiles();
+  if (!filesDB[session]) return;
+  const removed = filesDB[session].splice(idx, 1)[0];
+  if (!removed) return;
+  if (!confirm('"'+removed.name+'" 파일의 데이터를 제거하시겠습니까?\n해당 파일로 추가된 데이터가 삭제됩니다.')) {
+    filesDB[session].splice(idx, 0, removed); return;
+  }
+  saveFiles(filesDB);
+  // 해당 파일로 추가된 데이터 제거 — 전체 재로드 후 남은 파일들로 재구성
+  // (간단 구현: 전체 삭제 후 남은 파일 없으면 DB 초기화 안내)
+  if (!filesDB[session].length) {
+    const db = loadDB(); db[session]={}; saveDB(db);
+    if (session==='kr') krT.length=0; else usT.length=0;
+  }
+  renderTradesPage();
+  setStatus('"'+removed.name+'" 제거됨', 'var(--muted)');
+}
+
 // ══ 매매내역 페이지 렌더 ══
 function renderTradesPage() {
   const sess  = curSession;
   const db    = loadDB();
   const dates = Object.keys(db[sess]||{}).sort().reverse();
   const all   = getAllTrades(sess);
+  renderFilesList(sess);
 
   // 날짜 필터 드롭다운 갱신
   const sel = document.getElementById('tr-filter-date');
@@ -1442,6 +1550,7 @@ window.addEventListener('load', () => {
   ['kr','us'].forEach(sess => {
     const all=getAllTrades(sess);
     if (!all.length) return;
+    renderFilesList(sess);
     if (sess==='kr'){krT.length=0;krT.push(...all.slice(0,10));}
     else            {usT.length=0;usT.push(...all.slice(0,10));}
     refreshDashboard(sess, all.slice(0,10));
