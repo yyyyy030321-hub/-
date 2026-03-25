@@ -292,7 +292,11 @@ body{background:var(--bg);color:var(--text);font-family:'Noto Sans KR',sans-seri
     </button>
 
     <!-- 상태 표시 -->
-    <div id="csv-status" style="font-size:10px;color:var(--muted);text-align:center;min-height:14px;"></div>
+    <div id="csv-status" style="font-size:10px;color:var(--muted);text-align:center;min-height:14px;margin-bottom:6px"></div>
+    <button onclick="manualSync(curSession, this)" style="width:100%;border:1px solid var(--border2);border-radius:8px;padding:8px;font-size:11px;font-weight:500;color:var(--text);background:var(--bg3);cursor:pointer;font-family:'Noto Sans KR',sans-serif;transition:all .15s" id="manual-sync-btn"
+      onmouseover="this.style.background='var(--bg2)'" onmouseout="this.style.background='var(--bg3)'">
+      🔄 Drive에서 불러오기
+    </button>
   </div>
 
   <div class="sfoot">
@@ -311,7 +315,7 @@ body{background:var(--bg);color:var(--text);font-family:'Noto Sans KR',sans-seri
   <div id="dash-kr" class="sv on">
     <div class="phdr">
       <div><div class="ptitle">한국 시장 <span class="pill pill-kr">KR</span></div><div class="psub">2025.03.23 (월) · 09:00–15:30 KST · 장 마감</div></div>
-      <div class="acts"><button class="btn btn-g">📥 동기화</button><button class="btn btn-green" onclick="genJournal('kr',event)">✦ AI 일지 작성</button></div>
+      <div class="acts"><button class="btn btn-g" onclick="manualSync('kr',this)" id="sync-btn-kr">📥 불러오기</button><button class="btn btn-green" onclick="genJournal('kr',event)">✦ AI 일지 작성</button></div>
     </div>
     <div class="kgrid k3">
       <div class="kcard"><div class="klbl">오늘 실현손익 (KRW)</div><div class="kval up">+842,300</div><div class="ksub"><span class="badge up">+2.34%</span>전일 대비</div></div>
@@ -349,7 +353,7 @@ body{background:var(--bg);color:var(--text);font-family:'Noto Sans KR',sans-seri
   <div id="dash-us" class="sv">
     <div class="phdr">
       <div><div class="ptitle">미국 시장 <span class="pill pill-us">US</span></div><div class="psub">2025.03.22 (금) · 22:30–05:00 KST · 야간 마감</div></div>
-      <div class="acts"><button class="btn btn-g">📥 동기화</button><button class="btn btn-blue" onclick="genJournal('us',event)">✦ AI 일지 작성</button></div>
+      <div class="acts"><button class="btn btn-g" onclick="manualSync('us',this)" id="sync-btn-us">📥 불러오기</button><button class="btn btn-blue" onclick="genJournal('us',event)">✦ AI 일지 작성</button></div>
     </div>
     <div class="kgrid k3">
       <div class="kcard cb"><div class="klbl">오늘 실현손익 (USD)</div><div class="kval up" style="color:var(--blue)">+$1,248</div><div class="ksub"><span class="badge up">+3.12%</span>전일 대비</div></div>
@@ -1372,6 +1376,59 @@ function initPageCharts(id) {
   if (id === 'aijournal') initJournalCharts();
   if (id === 'analysis')  initAnalysisCharts();
   if (id === 'risk')      initRiskCharts();
+}
+
+// ── 수동 동기화 함수 ──
+async function manualSync(session, btn) {
+  const origText = btn ? btn.textContent : '';
+  if (btn) { btn.textContent = '⟳ 확인 중...'; btn.disabled = true; }
+  setStatus('⟳ Drive 확인 중...', 'var(--muted)');
+
+  // Drive 링크 있으면 Drive에서 시도
+  const urls = JSON.parse(localStorage.getItem(GDRIVE_KEY)||'{}');
+  if (urls[session]) {
+    const m = urls[session].match(/\/d\/([a-zA-Z0-9_-]+)/);
+    if (m) {
+      try {
+        const dlUrl = `https://drive.google.com/uc?export=download&id=${m[1]}`;
+        const proxy = `https://corsproxy.io/?${encodeURIComponent(dlUrl)}`;
+        const res   = await fetch(proxy, {cache:'no-store'});
+        if (res.ok) {
+          const text = await res.text();
+          // 해시 무시하고 강제 처리 (수동 동기화는 항상 최신)
+          const hashes = JSON.parse(localStorage.getItem(GDRIVE_HASH)||'{}');
+          delete hashes[session]; // 해시 초기화 → 강제 재처리
+          localStorage.setItem(GDRIVE_HASH, JSON.stringify(hashes));
+          processCSVText(text, session, 'gdrive_manual.csv');
+          setStatus('✓ Drive 동기화 완료', 'var(--green)');
+          if (btn) { btn.textContent = '✓ 완료'; setTimeout(()=>{ btn.textContent=origText; btn.disabled=false; },1500); }
+          return;
+        }
+      } catch(e) {
+        console.log('Drive sync failed:', e.message);
+      }
+    }
+  }
+
+  // Drive 없으면 안내
+  setStatus('Drive 링크를 먼저 설정하세요', 'var(--amber)');
+  if (btn) { btn.textContent = origText; btn.disabled = false; }
+
+  // 매매내역 페이지로 이동해서 설정 안내
+  goPage('trades', document.getElementById('ni-trades'));
+  setTimeout(() => {
+    const panel = document.getElementById('gdrive-sync-panel');
+    if (panel) {
+      panel.style.display = 'block';
+      panel.style.animation = 'none';
+      panel.style.background = 'rgba(251,191,36,0.05)';
+      panel.style.border = '1px solid rgba(251,191,36,0.2)';
+      panel.style.borderRadius = '8px';
+      panel.style.padding = '12px';
+      setTimeout(() => { panel.style.background=''; panel.style.border=''; panel.style.padding=''; }, 2000);
+    }
+    document.getElementById('gdrive-sync-url')?.focus();
+  }, 200);
 }
 
 // ── 모바일 사이드바 토글 ──
