@@ -1074,13 +1074,26 @@ function processCSV(text,session,filename){
   const db=loadDB();
   if(!db[session])db[session]={};
   let addedCount=0;
+  const isOverseas=broker==='namu_overseas';
 
   Object.entries(byDate).forEach(([date,rows])=>{
     const existing=db[session][date]||{trades:[],memos:{}};
-    const existKeys=new Set((existing.trades||[]).map(t=>t.l+'|'+t.entry+'|'+t.exit+'|'+t.pnl));
-    const fresh=rows.filter(t=>!existKeys.has(t.l+'|'+t.entry+'|'+t.exit+'|'+t.pnl));
-    addedCount+=fresh.length;
-    db[session][date]={trades:[...(existing.trades||[]),...fresh],memos:existing.memos||{}};
+    const existingTrades=existing.trades||[];
+    let merged;
+    if(isOverseas){
+      // 나무해외: 날짜+종목명 기준 → 최신 파일로 덮어쓰기 (파서 버전 달라도 정확)
+      const newNames=new Set(rows.map(t=>t.l));
+      const kept=existingTrades.filter(t=>!newNames.has(t.l));
+      merged=[...kept,...rows];
+      addedCount+=rows.length;
+    }else{
+      // 키움: l|entry|exit|pnl 기준 중복 제거
+      const existKeys=new Set(existingTrades.map(t=>t.l+'|'+t.entry+'|'+t.exit+'|'+t.pnl));
+      const fresh=rows.filter(t=>!existKeys.has(t.l+'|'+t.entry+'|'+t.exit+'|'+t.pnl));
+      merged=[...existingTrades,...fresh];
+      addedCount+=fresh.length;
+    }
+    db[session][date]={trades:merged,memos:existing.memos||{}};
   });
   saveDB(db);
 
