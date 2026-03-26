@@ -683,6 +683,8 @@ let _sortCol='date',_sortDir=-1;
 let _curPage=1;
 const PAGE_SIZE=50;
 let _stSortCol='totalPnl',_stSortDir=-1;
+let _stCharts={};
+let _stData=[];
 let _filteredTrades=[];
 let _dashCharts={};
 let _periodState={kr:{type:'all',from:'',to:''},us:{type:'all',from:'',to:''}};
@@ -1723,7 +1725,6 @@ function renderPsychPage(){
 // ══════════════════════════════════════════════════════
 // 전략 통계
 // ══════════════════════════════════════════════════════
-let _stCharts={},_stData=[],_stSortCol='totalPnl',_stSortDir=-1;
 function renderStrategyPage(){
   const all=getAllTrades(curSession).filter(t=>!t.isBuyOnly);
   const sym={};
