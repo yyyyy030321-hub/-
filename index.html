@@ -1557,14 +1557,20 @@ function drawPnlChart(id,trades,unit){
               y:{grid:{color:GC},ticks:{...TC,callback:v=>(v>=0?'+':'')+v.toLocaleString()},border:{color:BC.color}}}
     },
     plugins:[{id:'lbl',afterDatasetsDraw(chart){
-      const{ctx}=chart;
+      const{ctx,chartArea}=chart;
+      const top=chartArea.top+2;
+      const bottom=chartArea.bottom-2;
       chart.getDatasetMeta(0).data.forEach((bar,i)=>{
         const v=data[i];if(v===0)return;
         ctx.save();ctx.fillStyle=v>=0?'#3dd68c':'#f4645f';
         ctx.font='500 9px JetBrains Mono';ctx.textAlign='center';
         const lbl=(v>=0?'+':'')+( Math.abs(v)>=10000?Math.round(Math.abs(v)/10000)+'만':Math.abs(v).toLocaleString());
         const isPos=v>=0;
-        ctx.fillText(lbl,bar.x,isPos?bar.y-4:bar.y+bar.height+12);
+        // 차트 영역 안에서만 라벨 표시
+        const labelY=isPos
+          ? Math.max(top+8, bar.y-4)
+          : Math.min(bottom-2, bar.y+bar.height+11);
+        ctx.fillText(lbl,bar.x,labelY);
         ctx.restore();
       });
     }}]
