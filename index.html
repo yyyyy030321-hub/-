@@ -224,6 +224,10 @@ textarea.inp{resize:vertical;line-height:1.6;font-family:"Noto Sans KR",sans-ser
   </div>
   <div class="sfoot">
     <div class="sfoot-status" id="csv-status"></div>
+    <div style="display:flex;gap:5px;margin-top:8px">
+      <button onclick="diagnosePnl()" class="btn btn-sm" style="font-size:9px;padding:3px 7px;flex:1">🔍 진단</button>
+      <button onclick="hardReset()" class="btn btn-sm btn-red" style="font-size:9px;padding:3px 7px;flex:1">⚠ 초기화</button>
+    </div>
     <div class="ver-badge">v3.0</div>
   </div>
 </nav>
@@ -913,6 +917,40 @@ function parseKiwoomCSV(text){
 // ── 나무증권 해외주식 파서 v3 ──
 // 정확한 계산: 종목별 전체 매도합계-매수합계 = 순손익
 // 날짜별 표시: 매도금액 비율로 각 날짜에 손익 배분
+// ══ 나무증권 실현손익 파서 (손익현황 CSV) ══
+function parseNamuPnlCSV(text, rate){
+  const lines=text.split(/\r?\n/).map(l=>l.trim()).filter(l=>l);
+  const trades=[];
+  let hi=lines.findIndex(l=>l.includes('종목명')&&l.includes('실현손익'));
+  if(hi===-1)hi=0;
+  for(let i=hi+1;i<lines.length;i++){
+    const cols=splitCSV(lines[i]);
+    if(cols.length<16)continue;
+    const name=cols[5].trim();
+    if(!name)continue;
+    const sellQty=pNum(cols[9]);
+    const realized=pNum(cols[15]);
+    const buyPx=pNum(cols[7]);
+    const sellPx=pNum(cols[10]);
+    if(sellQty===0)continue;
+    const rateVal=(typeof rate==='number'&&rate>0)?rate:1432;
+    const pnlKRW=Math.round(realized*rateVal);
+    const win=realized>=0;
+    const absK=Math.abs(pnlKRW);
+    const sign=win?'+':'';
+    trades.push({
+      id:Date.now()+'_'+Math.random().toString(36).slice(2,6),
+      l:name,entry:buyPx,exit:sellPx,
+      pnl:pnlKRW,
+      ps:sign+pnlKRW.toLocaleString()+'원',
+      pl:sign+(absK>=10000?Math.round(absK/10000)+'만':absK.toLocaleString()),
+      w:win,qty:sellQty,date:todayKey(),type:'long',isBuyOnly:false,
+      detail:'실현손익 $'+realized.toFixed(2)+' × '+rateVal,
+    });
+  }
+  return trades;
+}
+
 function parseNamuOverseasCSV(text){
   const lines=text.split(/\r?\n/).map(l=>l.trim()).filter(l=>l);
   let hi=-1;
@@ -1043,7 +1081,11 @@ function parseNamuCSV(text){
 }
 
 function detectBroker(text,filename,session){
-  // 나무증권 해외주식 (2줄 1쌍 포맷)
+  // 나무증권 손익현황 CSV (실현손익 컬럼 있음)
+  if(text.includes('실현손익') && text.includes('매매손익') && text.includes('티커종목')){
+    return 'namu_pnl';
+  }
+  // 나무증권 해외주식 체결내역 (2줄 1쌍 포맷)
   if((text.includes('실거래일자')&&text.includes('외화정산금액'))||
      (text.includes('실거래일자')&&text.includes('거래번호')&&text.includes('주문종목명'))){
     return 'namu_overseas';
@@ -1059,7 +1101,10 @@ function detectBroker(text,filename,session){
 // ══════════════════════════════════════════════════════
 function processCSV(text,session,filename){
   const broker=detectBroker(text,filename,session);
-  const trades=broker==='kiwoom'?parseKiwoomCSV(text):broker==='namu_overseas'?parseNamuOverseasCSV(text):parseNamuCSV(text);
+  const trades=broker==='kiwoom'         ? parseKiwoomCSV(text)
+    : broker==='namu_overseas'           ? parseNamuOverseasCSV(text)
+    : broker==='namu_pnl'                ? parseNamuPnlCSV(text, 1432)
+    : parseNamuCSV(text);
 
   if(!trades.length){setStatus('⚠ 체결 데이터를 찾을 수 없습니다','var(--amber)');return}
 
@@ -1938,6 +1983,95 @@ async function genJournal(session,ev){
 // ══════════════════════════════════════════════════════
 // 유틸
 // ══════════════════════════════════════════════════════
+// ── 진단 함수 ──
+function diagnosePnl(){
+  const sess = curSession;
+  const all  = getAllTrades(sess);
+  const real = all.filter(t=>!t.isBuyOnly);
+  const total= real.reduce((s,t)=>s+t.pnl,0);
+  const wins = real.filter(t=>t.w);
+  const loses= real.filter(t=>!t.w);
+  const avgW = wins.length ? wins.reduce((s,t)=>s+t.pnl,0)/wins.length : 0;
+  const avgL = loses.length ? Math.abs(loses.reduce((s,t)=>s+t.pnl,0)/loses.length) : 0;
+  const isKR = sess==='kr';
+  const unit = isKR ? '원' : 'USD';
+
+  // 날짜별 손익
+  const byDate={};
+  real.forEach(t=>{
+    const d=normalizeDate(t.date);
+    byDate[d]=(byDate[d]||0)+t.pnl;
+  });
+  const dateLines = Object.keys(byDate).sort()
+    .map(d=>`${d}: ${(byDate[d]>=0?'+':'')+Math.round(byDate[d]).toLocaleString()}${unit}`)
+    .join('\n');
+
+  const msg = [
+    `[${sess.toUpperCase()}] localStorage 진단 결과`,
+    `─────────────────────────`,
+    `전체 거래 수: ${all.length}건`,
+    `실현 손익 수: ${real.length}건`,
+    `미청산(제외): ${all.length-real.length}건`,
+    ``,
+    `총 실현손익: ${(total>=0?'+':'')+Math.round(total).toLocaleString()}${unit}`,
+    `승률: ${real.length?(wins.length/real.length*100).toFixed(1)+'%':'N/A'}  (${wins.length}승 ${loses.length}패)`,
+    `평균익절: ${Math.round(avgW).toLocaleString()}${unit}`,
+    `평균손절: ${Math.round(avgL).toLocaleString()}${unit}`,
+    `손익비: 1:${avgL>0?(avgW/avgL).toFixed(2):'N/A'}`,
+    ``,
+    `날짜별 손익:`,
+    dateLines,
+    `─────────────────────────`,
+    `데이터가 틀리면 ⚠ 초기화 후 CSV 재업로드하세요`
+  ].join('\n');
+
+  alert(msg);
+}
+
+function hardReset(){
+  if(!confirm(
+    '⚠ 전체 localStorage 데이터를 초기화합니다\n\n' +
+    '・모든 매매 이력\n' +
+    '・파일 목록\n' +
+    '・GitHub/Drive 설정\n\n' +
+    '이 작업은 되돌릴 수 없습니다.\n계속할까요?'
+  )) return;
+
+  // 모든 malt_ 키 삭제
+  const keysToDelete = [];
+  for(let i=0;i<localStorage.length;i++){
+    const k=localStorage.key(i);
+    if(k && k.startsWith('malt_')) keysToDelete.push(k);
+  }
+  keysToDelete.forEach(k=>localStorage.removeItem(k));
+
+  // 차트 제거
+  Object.keys(_dashCharts).forEach(id=>{
+    try{_dashCharts[id].destroy();delete _dashCharts[id]}catch{}
+    const c=document.getElementById(id);
+    if(c){const ctx=c.getContext('2d');if(ctx)ctx.clearRect(0,0,c.width,c.height)}
+  });
+
+  // KPI 초기화
+  ['kr','us'].forEach(sess=>{
+    const pfx=sess==='kr'?'dk':'du';
+    ['total','wr','rr','cnt'].forEach(k=>{
+      const el=document.getElementById(pfx+'-'+k);
+      if(el){el.textContent='—';el.className='kval n'}
+    });
+    const tbody=document.getElementById(pfx+'-tbody');
+    if(tbody)tbody.innerHTML='<tr><td colspan="6" style="text-align:center;padding:28px;color:var(--muted)">CSV를 불러오면 자동 표시됩니다</td></tr>';
+    setConnStatus(sess,false,0);
+  });
+
+  // 현재 페이지 갱신
+  const active=document.querySelector('.page.on')?.id?.replace('page-','');
+  if(active==='trades') renderTradesPage();
+
+  setStatus('✓ 전체 초기화 완료 — CSV를 다시 업로드하세요','var(--green)');
+  alert('초기화 완료!\n\nCSV 파일을 다시 업로드해주세요.');
+}
+
 function escHtml(s){return(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;')}
 
 // ══════════════════════════════════════════════════════
